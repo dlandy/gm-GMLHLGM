@@ -18,57 +18,42 @@
  * 			- ...
  */
 
-(function() {
+jsPsych.plugins["gmath-tutorial"] = (function() {
 
-	jsPsych['gm-tutorial'] = (function() {
+	var plugin = {};
 
-		var plugin = {};
+	plugin.trial = function(display_element, trial) { // block, part
+		display_element = d3.select(display_element[0]);
 
-		plugin.trial = function(display_element, trial) { // block, part
-			display_element = d3.select(display_element[0]);
+		var container = display_element.append('div').attr('id', 'container');
+		container.append('h2').text(trial.title);
+    var players = []
+      , tutorials_finished = 0;
 
-			var container = display_element.append('div').attr('id', 'container');
-			container.append('h2').text(trial.title);
-
-			var task_count = trial.tasks.length
-			  , eqs = []
-			  , expressions = []
-			  , players = []
-			  , finished = 0;
-
-			trial.tasks.forEach(function(task, i) {
-				var tp = new gmath.GMTutorialPair('#container', {
-					gestureData: task
-				, eq: task.options.eq
-				, correctAnswers: task.correctAnswers
-				, text: task.text
-				, startWiggle: task.startWiggle
-				, allow_restart_after_done: false
-				});
-				tp.events.on('done', done);
-				players.push(tp);
+		trial.tasks.forEach(function(task, i) {
+			var tp = new gmath.ui.TutorialPair('#container', {
+				gestureData: task.recording
+			, eq: task.recording.options.eq
+			, correctAnswers: task.correctAnswers
+			, text: task.instructions
+			, startWiggle: task.startWiggle
+			, allow_restart_after_done: false
 			});
-			var div = d3.selectAll('div.tutorial').append('div').style('clear', 'both');
-			//div.append('p').text('(watch how its done)').style({'margin-top': 0, color: 'silver', 'font-style': 'italic', width: '50%', float: 'left', 'text-align': 'center'})
+			tp.events.on('done', function() {
+        tutorials_finished++;
+        if (tutorials_finished >= players.length) {
+          setTimeout(function() {
+            display_element.html('');
+            jsPsych.finishTrial({});
+          }, trial.timing_post_interaction);
+        }
+      });
+			players.push(tp);
+		});
 
-      // FIXME
-			// function done() {
-			// 	finished++;
-			// 	if (finished < task_count) return;
-			// 	players.forEach(function(player) {
-			// 		player.stop();
-			// 		player.events.on('done', null);
-			// 	});
-			// 	if (plugin.progress_fn) plugin.progress_fn((trial.id+1)/block.trials.length);
-			// 	setTimeout(function() {
-			// 		display_element.html('');
-			// 		block.next()
-			// 	}, 1000);
-			// }
+		d3.selectAll('div.tutorial').append('div').style('clear', 'both');
 
-		};
+	};
 
-		return plugin;
-	})();
-
+	return plugin;
 })();

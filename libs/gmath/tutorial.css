@@ -1,0 +1,276 @@
+@import url(http://fonts.googleapis.com/css?family=Kalam:400);
+
+.new-tag::after {
+  content: "new";
+  margin-left: 1em;
+  color: white;
+  background: orange;
+  padding: 0 0.45em 0.1em 0.5em;
+  border-radius: 1em;
+  position: absolute;
+}
+
+g.math text {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  dominant-baseline: alphabetic;
+}
+
+body {
+	margin: 0;
+}
+
+g.math {
+	pointer-events: all;
+}
+
+#logo {
+  display: block;
+  margin-bottom: 10px;
+}
+
+#menus {
+  float: left;
+}
+
+.menu {
+  margin-top: 21px;
+  margin-left: 50px;
+  margin-bottom: 21px;
+}
+
+.menu .menu-item, #prev, #next {
+	font-family: Lato;
+	text-decoration: none;
+  color: gray;
+  font-size: 15px;
+  display: block;
+  padding: 8px 8px;
+  border-radius: 4px;
+  border: 1px rgba(0,0,0,0) solid;
+  cursor: pointer;
+}
+
+#prev, #next {
+	display: inline;
+	cursor: default;
+}
+
+.menu .menu-item:hover {
+	display: inline-block;
+	border: silver 1px solid;
+	color: #666;
+	cursor: pointer;
+}
+
+#prev.active:hover, #next.active:hover {
+	border: silver 1px solid;
+	cursor: pointer;
+}
+
+.menu .menu-item.active, #prev.active, #next.active {
+	margin: 0px;
+  color: #85C042;
+}
+
+div.middle {
+  margin: 0;
+  margin-bottom: 40px;
+  background-color: #84BF41;
+  border-bottom: rgba(69, 70, 67, 0.5) 1px solid;
+  padding: 7px 8px 0px 10px;
+}
+
+h1 a {
+	text-decoration: none;
+	color: white;
+}
+
+div.middle h1 {
+  font-weight: 300;
+  font-size: 22px;
+  color: #4D4D4C;
+  line-height: 25px;
+  font-family: 'Lato', helvetica, arial, sans-serif;
+  margin-top: 0px;
+  width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 8px;
+}
+
+h1 img {
+	padding-right: 3px;
+  vertical-align: -6px;
+  width: 40px;
+}
+
+h2 {
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  margin-bottom: 0;
+  font-weight: normal;
+  color: #333;
+}
+
+p.tutorial-instructions {
+	font-size: 19px;
+	font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+	color: #555;
+	font-weight: 300;
+	margin-top: 1em;
+}
+
+.tutorial {
+	margin-bottom: 3em;
+}
+
+.tutorial .choice {
+	margin: 10px 0;
+}
+
+#navs {
+	clear: both;
+	text-align: center;
+	width: 500px;
+}
+
+#outer {
+  margin: auto;
+  margin-bottom: 40px;
+  margin-top: 20px;
+  width: 780px;
+  padding: 0 10px;
+}
+
+#content {
+	width: 500px;
+	margin: auto;
+	float: left;
+}
+
+.interactive {
+  cursor: pointer;
+}
+
+.instructions {
+	margin: auto;
+	text-align: left;
+	font-size: 18px;
+}
+
+div.choices {
+	width: 45%;
+	float: left;
+}
+
+.choice {
+	border: 1px solid silver;
+	border-radius: 4px;
+	background: #eee;
+  height: 120px;
+	width: 500px;
+	margin: 20px auto;
+	position: relative;
+}
+
+.large-choice {
+	height: 240px;
+	width: 1000px;
+}
+
+.choice svg {
+	overflow: visible;
+}
+
+.animation {
+  position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.choice button {
+	position: absolute;
+	left: 10px;
+	width: 120px;
+	font-style: normal;
+  border-color: #444;
+  background: inherit;
+  color: #444;
+  display: inline-block;
+  margin: 0;
+  padding: 0 12px;
+  min-width: 52px;
+  min-height: 47px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 2px;
+  vertical-align: top;
+  text-align: center;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  line-height: 42px;
+  cursor: pointer;
+  font-family: "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
+}
+
+.choice button:active {
+	background: #444;
+	color: inherit;
+}
+
+.choice span.feedback {
+  position: absolute;
+  right: 20px;
+  top: 50px;
+  border-radius: 50%;
+  border: 1px solid #444;
+  color: #444;
+  font-size: 32px;
+  width: 0.8em;
+  height: 0.8em;
+  line-height: 0.6em;
+  padding-left: 2px;
+  background-color: inherit;
+}
+
+.large-choice span.feedback {
+  top: 20px;
+}
+
+.choice span.tryit {
+  position: absolute;
+  left: 20px;
+  top: 45px;
+  color: #444;
+  font-size: 22px;
+  font-style: italic;
+}
+
+.large-choice span.tryit {
+  top: 20px;
+}
+
+#outer.large {
+  margin: auto;
+  margin-bottom: 40px;
+  width: 1500px;
+  padding: 0 10px;
+}
+
+#content.large {
+	width: 1000px;
+	margin: auto;
+	float: left;
+}
+
+.choice2 {
+	height: 250px;
+	width: 500px;
+	margin: 20px auto;
+	position: relative;
+	border: 1px solid silver;
+}
