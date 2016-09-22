@@ -30,11 +30,6 @@ subject_id = gmath.uid().substr(1,6).toUpperCase();
 var welcome_message = '<div id="welcome"><p id="participant_id">Participant ID: <span>'+subject_id+'</span></p><p>Welcome to the experiment.</br>Press enter to begin.</p></div>';
 var welcome_block = { type: 'text', text: [welcome_message], cont_key: [13] };
 
-var template_block = { type: 'jspsych-template'
-                     , data: { another_parameter: 'david' }
-                     , timing_post_trial: 1000
-                     , timeline: [ { stimulus: 1 }, { stimulus: 2 } ] };
-
 // Pages (element in the timeline) with a number of gestures on each page (tasks in each timeline element).
 var tutorial_block = { type: 'gmath-tutorial'
                      , timing_post_interaction: 2000 // time after end-of-interaction to screen blank
@@ -63,6 +58,6 @@ var gesture_block = { type: 'gmath-gesture'
                     , timeline: [ { starting: 'x+1', target: '1+x', instructions: 'commute', gravity: false }
                                 , { starting: '(2x+3)*(y+3)', target: '2y', instructions: 'A large amount of instructions I would not like to say out loud.', gravity: true } ] };
 
-jsPsych.init({ timeline: [ gesture_block ] });
+jsPsych.init({ timeline: [ welcome_block, tutorial_block, gesture_block ] });
 
 </script>
