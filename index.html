@@ -1,262 +1,49 @@
 <!doctype html>
 <meta charset='utf-8'>
 <title>GM Experiment</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<!-- <script src="scripts/jquery-1.11.1.min.js"></script> -->
+<script src="libs/jquery/jquery-1.11.1.min.js"></script>
 <!-- Load D3 for GM -->
 <script src="libs/d3/d3.min.js"></script>
-<!-- Load Grasping Math -->
-<script src="libs/gmath-0.1.2x.min.js"></script>
-<script src="libs/tutorial-pair.js"></script>
-<script src="libs/svg-play-button.js"></script>
-<!-- Load the event recorder and recorded tutorial gesture data -->
-<script src="libs/event-recorder.js"></script>
-<script src="stimuli/tutorial-gesture-data.js"></script>
+<!-- Load Graspable Math -->
+<script src="libs/gmath/gmath.min.js"></script>
 <!-- Load the jspsych library and plugins -->
-<script src="stimuli/scrambler.js"></script>
-<script src="scripts/jspsych.js"></script>
-<script src="scripts/plugins/jspsych-text.js"></script>
-<script src="scripts/plugins/jspsych-html.js"></script>
+<script src="jspsych-5.0.3/jspsych.js"></script>
+<!-- <script src="stimuli/scrambler.js"></script> -->
+<script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
+<script src="jspsych-5.0.3/plugins/template/jspsych-plugin-template.js"></script>
+<script src="jspsych-5.0.3/plugins/jspsych-gmath-gesture.js"></script>
+<!-- <script src="scripts/plugins/jspsych-html.js"></script>
 <script src="scripts/plugins/jspsych-call-function.js"></script>
 <script src="scripts/plugins/jspsych-gm-tutorial.js"></script>
 <script src="scripts/plugins/jspsych-gm-solve-eq.js"></script>
-<script src="scripts/plugins/jspsych-gm-multiple-choice.js"></script>
+<script src="scripts/plugins/jspsych-gm-multiple-choice.js"></script> -->
+<script src="libs/bootstrap/bootstrap.min.js"></script>
 <!-- Load the stylesheet -->
-<link href="css/jspsych.css" type="text/css" rel="stylesheet"></link>
-<link rel="stylesheet" href="libs/fonts/fonts.css"/>
-<link rel="stylesheet" href="css/main.css"/>
-<link rel="stylesheet" href="css/bootstrap.css"/>
-<link rel="stylesheet" href="css/bootstrap-theme.css"/>
+<link href="jspsych-5.0.3/css/jspsych.css" type="text/css" rel="stylesheet"></link>
+<!-- <link rel="stylesheet" href="libs/fonts/fonts.css"/> -->
+<link rel="stylesheet" href="libs/gmath/canvas.css"/>
+<link rel="stylesheet" href="libs/bootstrap/bootstrap.min.css"/>
+<!-- <link rel="stylesheet" href="css/bootstrap-theme.css"/> -->
 </head>
-
-<div id="progress_bar"></div>
-<div id="jspsych_target"></div>
 
 <script>
 
 test_mode = true; // false or true
 subject_id = gmath.uid().substr(1,6).toUpperCase();
-condition = 'interactive'; // 'interactive' or 'static'
-gmath.AlgebraView.defaultOptions.inactive_color = gmath.AlgebraView.defaultOptions.color;
-gmath.DerivationList.defaultOptions.substitution_on = false;
-function setProgress(ratio) {
-  console.log(ratio);
-  d3.select('#progress_bar')
-    .transition()
-    .styleTween('width', function (d, i, a) {
-      var from = this.style.width,
-          to = (100*ratio).toFixed(2)+'%';
-      return d3.interpolateString(from, to);
-    })
-}
-function clearProgress() {
-  d3.select('#progress_bar').interrupt().transition().duration(0).style('width', '0%');
-}
-var welcomeMessage = '<div id="welcome"><p id="participant_id">Participant ID: <span>'+subject_id+'</span></p><p>Welcome to the experiment.</br>Press enter to begin.</p></div>';
-var welcomeBlock = { type: 'text', text: [welcomeMessage], cont_key: [13] };
-var tutorialBlock = { type: 'gm-tutorial'
-                    , progress_fn: setProgress
-                    , pages: data
-                    };
-function startExperiment(pretestBlock, posttestBlock, trainingBlock) {
-  jsPsych.init({
-     display_element: $('#jspsych_target')
-   , experiment_structure: [
-    //    welcomeBlock
-    //  , {type: "html", title: "Instructions", timing_post_trial: 500, pages: [
-    //     { url: "html-templates/pre-instructions.html"
-    //     , cont_btn: "start"
-    //     , force_refresh: true
-    //     }
-    //   ]}
-    // , { type: "call-function", fn: clearProgress }
-    // , pretestBlock
-    // , { type: "call-function", fn: clearProgress }
-    // , {type: "html", title: "Tutorial", timing_post_trial: 500, pages: [
-    //     { url: "html-templates/tutorial-instructions.html"
-    //     , cont_btn: "start"
-    //     , force_refresh: true
-    //     }
-    //   ]}
-    // , tutorialBlock
-    // , { type: "call-function", fn: clearProgress }
-    // , {type: "html", title: "Instructions", timing_post_trial: 500, pages: [
-    //     { url: "html-templates/train-instructions-" + condition + ".html"
-    //     , cont_btn: "start"
-    //     , force_refresh: true
-    //     }
-    //   ]}
-     trainingBlock
-    , { type: "call-function", fn: clearProgress }
-    , {type: "html", title: "Instructions", timing_post_trial: 500, pages: [
-        { url: "html-templates/post-instructions.html"
-        , cont_btn: "start"
-        , force_refresh: true
-        }
-      ]}
-    , posttestBlock
-    , { type: "call-function", fn: clearProgress }
-    , {type: "html", title: "Debriefing", timing_post_trial: 500, pages: [
-        { url: "html-templates/finished.html"
-        , force_refresh: true
-        , data: { subject_id: subject_id }
-        }
-      ]}
-  ]
-  , on_finish: function(block) {
-      //jsPsych.dataAPI.displayData('json');
-      //jsPsych.dataAPI.localSave('data.json', 'json')
-    }
-  });
-}
-function pre_post_saver(idx, trial, finished_callback) {
-  var saveData = {
-    // exp_id: experiment_id
-    stage: trial.stage
-  , trial_idx: idx
-  , task_id: trial.task_id
-  , task: trial.eq
-  , cond: condition
-  , correct_answer: trial.sol
-  , recorded_time_to_action: trial.time_to_action
-  , recorded_time_to_submit: trial.time_to_submit
-  , recorded_answer: trial.userInput
-  , recorded_accuracy: trial.accuracy
-  }
-  if (test_mode) {
-    console.log('would transmit ', JSON.stringify([saveData]));
-    finished_callback();
-  } else {
-    submitToServer(saveData, finished_callback);
-  }
-}
-function save_main_trial(idx, trial, finished_callback) {
-  var saveData = {
-    // exp_id: experiment_id
-    stage: 'main'
-  , trial_idx: idx
-  , cond: trial.condition
-  , task: trial.solution
-  , task_id: trial.task_id
-  , optionA: trial.A
-  , optionB: trial.B
-  , optionC: trial.C
-  , optionD: trial.D
-  , correct_answer: trial.correctAnswer
-  , recorded_time_to_action: trial.time_to_action
-  , recorded_time_to_submit: trial.time_to_submit
-  , recorded_action_result: trial.userResult
-  , recorded_accuracy: trial.accuracy
-  , recorded_action_count: trial.userActionCount
-  , recorded_answer: trial.userChoice
-  };
-  if (test_mode) {
-    console.log('would transmit ', JSON.stringify([saveData]));
-    finished_callback();
-  }
-  else submitToServer(saveData, finished_callback);
-}
-function submitToServer(data, callback) {
-  $.ajax({
-    type: 'post',
-    cache: false,
-    url: 'db_submit.php',
-    data: { json: JSON.stringify(Array.isArray(data) ? data : [data])
-          , subject_id: subject_id },
-    success: callback
-  });
-}
-function parsePrePostCSV(callback) {
-  d3.csv('stimuli/pre-post-short.csv')
-      .row(function(d) {return {problemBase:d.problemBase
-                               ,solutionBase:d.solutionBase
-                               ,problem1:d.problem1
-                               ,solution1:d.solution1
-                               ,problem2:d.problem2
-                               ,solution2:d.solution2}})
-      .get(callback);
-}
-function createPrePostBlocks(rows) {
-  var pretestProblems = []
-     ,posttestProblems = [];
-  var scrambledRows = permutation(rows);
-  for (var i=0; i<rows.length; i++) {
-    var row = scrambledRows[i];
-    var idx = rows.indexOf(row);
-    var option1 = { eq:row.problem1, 'var':'x', sol:row.solution1
-                  , task_id: idx}
-       ,option2 = { eq:row.problem2, 'var':'x', sol:row.solution2
-                  , task_id: idx};
-    if (Math.random()>=0.5) {
-      pretestProblems.push(option1); posttestProblems.push(option2);
-    } else {
-      pretestProblems.push(option2); posttestProblems.push(option1);
-    }
-  }
-  var pretestBlock = {
-    type: 'gm-solve-eq'
-  , timing_post_trial: 500
-  , save_trial: pre_post_saver
-  , problems: pretestProblems
-  , stage: 'pre'
-  , progress_fn: setProgress
-  };
-  var posttestBlock = {
-    type: 'gm-solve-eq'
-  , timing_post_trial: 500
-  , save_trial: pre_post_saver
-  , problems: posttestProblems
-  , stage: 'post'
-  , progress_fn: setProgress
-  };
-  return [pretestBlock, posttestBlock];
-}
-function parseMainCSV(callback) {
-  d3.csv('stimuli/main.csv')
-      .row(function(d) {return {target:d.target
-                               ,correct:d.correctBase
-                               ,bad1:d.badBase1
-                               ,bad2:d.badBase2
-                               ,bad3:d.badBase3}})
-      .get(callback);
-}
-function createMainBlock(rows, condition) {
-  var _1st = 0;
-  var problems = [];
-  var scrambledRows = permutation(rows);
-  for (var i=_1st; i<scrambledRows.length; i++) {
-    var row = scrambledRows[i];
-    var row_idx = rows.indexOf(row);
-    var scrambled = scramble([row.target, row.correct, row.bad1, row.bad2, row.bad3]);
-    var problem = {};
-    var choices = permutation(scrambled.slice(2));
-    var num_of_choices = 3
-    var correct_idx = Math.round(Math.random()*(num_of_choices-1));
-    choices.splice(correct_idx, 0, scrambled[1]);
-    var letter = ['A', 'B', 'C'][correct_idx];
-    problem.solution = scrambled[0];
-    problem.A = choices[0];
-    problem.B = choices[1];
-    problem.C = choices[2];
-    problem.correctAnswer = letter;
-    problem.task_id = row_idx;
-    problem.condition = condition
-    problems.push(problem);
-  }
-  var trainingBlock = {
-    type: 'gm-multiple-choice'
-   ,save_trial: save_main_trial
-   ,timing_post_trial: 500
-   ,problems: problems
-  , progress_fn: setProgress
-  }
-  return trainingBlock;
-}
-parsePrePostCSV(function(err, rows) {
-  var blocks = createPrePostBlocks(rows);
-  parseMainCSV(function(err, rows) {
-    var mainBlock = createMainBlock(rows, condition);
-    startExperiment(blocks[0], blocks[1], mainBlock);
-  });
-});
+
+var welcome_message = '<div id="welcome"><p id="participant_id">Participant ID: <span>'+subject_id+'</span></p><p>Welcome to the experiment.</br>Press enter to begin.</p></div>';
+var welcome_block = { type: 'text', text: [welcome_message], cont_key: [13] };
+
+var template_block = { type: 'jspsych-template'
+                     , data: { another_parameter: 'david' }
+                     , timing_post_trial: 1000
+                     , timeline: [ { stimulus: 1 }, { stimulus: 2 } ] };
+
+var gesture_block = { type: 'gmath-gesture'
+                    , timing_post_trial: 1000
+                    , timeline: [ { expr: 'x+1', instructions: 'commute', gravity: false } //] }
+                                , { expr: 'y+y', instructions: 'add', gravity: true } ] }
+
+jsPsych.init({ timeline: [ gesture_block ] });
+
 </script>
