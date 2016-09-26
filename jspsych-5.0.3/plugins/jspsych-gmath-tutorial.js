@@ -23,15 +23,26 @@ jsPsych.plugins["gmath-tutorial"] = (function() {
 	var plugin = {};
 
 	function init_trial_data(trial) {
-		var trial_data = {};
-		
+		var trial_data = gmath.extend({}, trial);
+		trial_data.tasks = trial.tasks.map(function(task, idx) { task_idx: idx
+			                                                     , eq: task.recording.options.eq
+																										       , instructions: task.instructions
+																										       , user_solution: ''
+																										       , attempts: 0, });
+		return trial_data;
+	}
+
+	function task_solution(trial, task_idx, derivation) {
+		gmath.TrialLogger.trial.tasks[task_idx].attempts++;
+		gmath.TrialLogger.trial.tasks[task_idx].user_solution = derivation.getLastModel.to_ascii();
 	}
 
 	plugin.trial = function(display_element, trial) { // block, part
 		display_element = d3.select(display_element[0]);
 
-		gmath.TrialLogger.startTrial(jsPsych.data.getLastTrialData().trial_index, trial);
-		console.log(jsPsych.data.getLastTrialData().trial_index, jsPsych.currentTrial());
+		var trial_index = jsPsych.data.getLastTrialData().trial_index;
+		gmath.TrialLogger.startTrial(trial_index, init_trial_data(trial));
+		console.log(trial_index, jsPsych.currentTrial());
 
 		var container = display_element.append('div').attr('id', 'container');
 		container.append('h2').text(trial.title);
@@ -48,6 +59,7 @@ jsPsych.plugins["gmath-tutorial"] = (function() {
 			, allow_restart_after_done: false
 			});
 			tp.events.on('done', function() {
+				task_solution(trial, i, tp.dl);
         tutorials_finished++;
         if (tutorials_finished >= players.length) {
           setTimeout(function() {
@@ -55,7 +67,9 @@ jsPsych.plugins["gmath-tutorial"] = (function() {
             jsPsych.finishTrial({});
           }, trial.timing_post_interaction);
         }
-      });
+      }).on('retry', function() {
+				task_solution(trial, i, tp.dl);
+			});
 			players.push(tp);
 		});
 

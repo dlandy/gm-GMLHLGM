@@ -25,11 +25,12 @@
 			var d3_display_element = d3.select(display_element[0]);
 			var container = d3_display_element.append('div').attr('id', 'gesture-trial-container');
 
-			var startTime = Date.now();
-			// gmath.TrialLogger.startTrial(jsPsych.)
+			var trial_index = jsPsych.data.getLastTrialData().trial_index;
+			gmath.TrialLogger.startTrial(trial_index, trial);
+			console.log(trial_index, jsPsych.currentTrial());
 
       var canvas_opts = { vertical_scroll: false
-                        , log_mouse_trajectories: false
+                        , log_mouse_trajectories: true
                         , disable_ga_tracking: true
                         , use_keyboard: false
                         , use_hold_menu: false
@@ -82,6 +83,7 @@
         derivation.getLastView().interactive(false);
         derivation.events.on('added_line.jspsych', null);
         derivation.getLastModel().events.on('end-of-interaction.jspsych', null);
+				gmath.TrialLogger.setCustomFields({ user_solution: derivation.getLastModel().to_ascii() })
         setTimeout(function() {
           display_element.html('');
           jsPsych.finishTrial({});
