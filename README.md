@@ -1,6 +1,6 @@
 *User study to find optimal places & sizes for target boxes.*
 
-To run the experiment, clone this repository and open the index.html page in your Chrome browser.
+To run the experiment, clone/download this repository and open the index.html page in your Chrome browser.
 
 The experiment can also be modified in that file.  Open the index.html file in a text editor.
 This interface is constructed with two custom jsPsych plugins, "gmath-tutorial" and "gmath-gesture."
