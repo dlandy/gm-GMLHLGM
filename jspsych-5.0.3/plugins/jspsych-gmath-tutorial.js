@@ -22,8 +22,16 @@ jsPsych.plugins["gmath-tutorial"] = (function() {
 
 	var plugin = {};
 
+	function init_trial_data(trial) {
+		var trial_data = {};
+		
+	}
+
 	plugin.trial = function(display_element, trial) { // block, part
 		display_element = d3.select(display_element[0]);
+
+		gmath.TrialLogger.startTrial(jsPsych.data.getLastTrialData().trial_index, trial);
+		console.log(jsPsych.data.getLastTrialData().trial_index, jsPsych.currentTrial());
 
 		var container = display_element.append('div').attr('id', 'container');
 		container.append('h2').text(trial.title);

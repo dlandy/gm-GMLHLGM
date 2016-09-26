@@ -26,6 +26,7 @@
 			var container = d3_display_element.append('div').attr('id', 'gesture-trial-container');
 
 			var startTime = Date.now();
+			// gmath.TrialLogger.startTrial(jsPsych.)
 
       var canvas_opts = { vertical_scroll: false
                         , log_mouse_trajectories: false

@@ -24,6 +24,8 @@
 
 <script>
 
+gmath.setupLogging({ experiment_id: 'gm_gestures_test', server: 'http://127.0.0.1:7010', enabled: true });
+
 test_mode = true; // false or true
 subject_id = gmath.uid().substr(1,6).toUpperCase();
 
@@ -56,7 +58,7 @@ var gesture_block = { type: 'gmath-gesture'
                     , timing_post_interaction: 2000 // time after end-of-interaction to screen blank
                     , timing_post_trial: 1000
                     , timeline: [ { starting: 'x+1', target: '1+x', instructions: 'commute', gravity: false }
-                                , { starting: '(2x+3)*(y+3)', target: '2y', instructions: 'A large amount of instructions I would not like to say out loud.', gravity: true } ] };
+                                , { starting: '(2x+3)*(y+3)', target: '2y', instructions: 'A large amount of instructions I would not like to say out loud. This sentence is to make the instructions to lines long.', gravity: true } ] };
 
 jsPsych.init({ timeline: [ welcome_block, tutorial_block, gesture_block ] });
 
