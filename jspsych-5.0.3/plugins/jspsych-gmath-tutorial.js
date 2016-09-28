@@ -37,15 +37,21 @@ jsPsych.plugins["gmath-tutorial"] = (function() {
 		gmath.TrialLogger.trial.tasks[task_idx].user_solution = derivation.getLastModel().to_ascii();
 	}
 
-	plugin.trial = function(display_element, trial) { // block, part
+	plugin.trial = function(display_element, trial) {
 		display_element = d3.select(display_element[0]);
 
 		var trial_index = jsPsych.data.getLastTrialData().trial_index;
 		gmath.TrialLogger.startTrial(trial_index, init_trial_data(trial));
 
+		d3.select('body').append('span')
+			.style('font-size', '16px')
+			.style('color', '#bababa')
+			.text(trial.subject_id);
+
 		var container = display_element.append('div').attr('id', 'container');
 		container.append('h2').text(trial.title);
-    var players = []
+
+		var players = []
       , tutorials_finished = 0;
 
 		trial.tasks.forEach(function(task, i) {
@@ -56,6 +62,7 @@ jsPsych.plugins["gmath-tutorial"] = (function() {
 			, text: task.instructions
 			, startWiggle: task.startWiggle
 			, allow_restart_after_done: false
+			, log_mouse_trajectories: true
 			});
 			tp.events.on('done', function() {
 				task_solution(trial, i, tp.dl);

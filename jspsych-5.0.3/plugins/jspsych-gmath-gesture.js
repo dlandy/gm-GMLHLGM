@@ -23,6 +23,12 @@
 
 		plugin.trial = function(display_element, trial) {
 			var d3_display_element = d3.select(display_element[0]);
+
+			d3.select('body').append('span')
+				.style('font-size', '16px')
+				.style('color', '#bababa')
+				.text(trial.subject_id);
+
 			var container = d3_display_element.append('div').attr('id', 'gesture-trial-container');
 
 			var trial_index = jsPsych.data.getLastTrialData().trial_index;
@@ -64,79 +70,91 @@
 
       var div = container.append('div');
 
-      div.append('p').style({color :'#666', margin: '20px auto', 'font-size': '20px'})
+      div.append('p')
+				.style({color :'#666', margin: '20px auto', 'font-size': '48px'})
         .text(trial.instructions);
+			div.append('p')
+				.style({color: '#666', margin: '20px auto', 'font-size': '24px'}).append('i')
+				.text(trial.gravity ? 'non-interactive' : 'interactive');
 
-      var gm_container = div.append('div').classed('gm-container', true);
-      var canvas = new gmath.ui.CanvasFactory(gm_container.node(), canvas_opts);
-      // FIXME: For some reason the svg within the canvas (deprecated, for the most part) has an altered position within the canvases on this page.
-      // This is producing a horizontal scroll bar.  Removing SVGs here to prevent that.
-      div.select('.gm-canvas').select('.gm-canvas-svg').remove();
+			// show instructions, then show other content
+			setTimeout(function() {
+				var gm_container = div.append('div').classed('gm-container', true);
+	      var canvas = new gmath.ui.CanvasFactory(gm_container.node(), canvas_opts);
+	      // FIXME: For some reason the svg within the canvas (deprecated, for the most part) has an altered position within the canvases on this page.
+	      // This is producing a horizontal scroll bar.  Removing SVGs here to prevent that.
+	      div.select('.gm-canvas').select('.gm-canvas-svg').remove();
 
-      derivation_opts.eq = trial.expression;
-      derivation_opts.pos = {x: 'center', y: 'center'};
-      derivation_opts.v_align = 'center';
-      var derivation = canvas.model.createDL(derivation_opts, function(dl) { dl.applyViewAlignment() });
-      var eoi_callback = function() {
-        derivation.getLastView().interactive(false);
-        derivation.events.on('added_line.jspsych', null);
-        derivation.getLastModel().events.on('end-of-interaction.jspsych', null);
-				gmath.TrialLogger.setCustomFields({ user_solution: derivation.getLastModel().to_ascii() })
-        setTimeout(function() {
-          display_element.html('');
-          jsPsych.finishTrial({});
-        }, trial.timing_post_interaction);
-      };
+	      derivation_opts.eq = trial.expression;
+	      derivation_opts.pos = {x: 'center', y: 'center'};
+	      derivation_opts.v_align = 'center';
+	      var derivation = canvas.model.createDL(derivation_opts, function(dl) { dl.applyViewAlignment() });
+	      var eoi_callback = function() {
+	        derivation.getLastView().interactive(false);
+	        derivation.events.on('added_line.jspsych', null);
+	        derivation.getLastModel().events.on('end-of-interaction.jspsych', null);
+					gmath.TrialLogger.setCustomFields({ user_solution: derivation.getLastModel().to_ascii() })
+	        setTimeout(function() {
+	          display_element.html('');
+	          jsPsych.finishTrial({});
+	        }, trial.timing_post_interaction);
+	      };
 
-      derivation.getLastModel().events.on('end-of-interaction.jspsych', eoi_callback);
-      derivation.events.on('added_line.jspsych', function() {
-        derivation.getLastModel().events.on('end-of-interaction.jspsych', eoi_callback);
-      });
+	      derivation.getLastModel().events.on('end-of-interaction.jspsych', eoi_callback);
+	      derivation.events.on('added_line.jspsych', function() {
+	        derivation.getLastModel().events.on('end-of-interaction.jspsych', eoi_callback);
+	      });
 
-			if (trial.show_target) {
-				var target_div = container.append('div')
+				var condition_div = container.append('div')
 					.style('float', 'right')
 					.style('margin-top', '10px');
-				target_div.append('div')
-					.style('float', 'left')
-					.style('margin-right', '10px')
-					.style('font-size', '24px')
-					.text('target: ');
-				var svg = target_div.append('svg')
-					.style('width', '100%')
-					.style('overflow', 'visible')
-					.style('margin-left', '0.5em')
-					.style('display', 'inline-block')
-					.style('visibility', 'hidden');
-				var font_size = 36;
 
-				var model = new gmath.AlgebraModel(trial.target)
-  			var view = new gmath.AlgebraView(model, svg, {interactive: false, inactive_color: '#000000', font_size: font_size, v_align: 'alphabetic', h_align: 'left' });
+				if (trial.show_target) {
+					var target_div = container.append('div')
+						.style('float', 'right')
+						.style('margin-top', '10px');
+					target_div.append('div')
+						.style('margin-right', '10px')
+						.style('font-size', '24px')
+						.style('vertical-align', 'top')
+						.text('target: ');
+					var svg = target_div.append('svg')
+						.style('width', '100%')
+						.style('overflow', 'visible')
+						.style('margin-left', '0.5em')
+						.style('display', 'inline-block')
+						.style('visibility', 'hidden');
+					var font_size = 36;
 
-				var resize_svg = function() {
-			    var view_bbox = view.getBBox();
-			    svg
-			      .style('height', view_bbox.height)
-			      .style('width', view_bbox.width);
-			    view.main.attr('transform', 'translate('+[0, view_bbox.height]+')');
-		      svg.style('margin-bottom', view_bbox.height - model.children[0].ascent + 'px');
-			  }
+					var model = new gmath.AlgebraModel(trial.target)
+	  			var view = new gmath.AlgebraView(model, svg, {interactive: false, inactive_color: '#000000', font_size: font_size, v_align: 'alphabetic', h_align: 'left' });
 
-			  view.init(function() {
-			    resize_svg();
-			    var view_bbox = view.getBBox();
-			    setTimeout(function() {
-			      var svg_w = svg.node().parentNode.clientWidth
-			        , view_w = view_bbox.width;
-			      if (view_w > 0.9*svg_w) {
-			        view.options.font_size *= 0.9 * svg_w / view_w;
-			        view.update_all(true);
-			        resize_svg();
-			      }
-			      svg.style('visibility', null);
-			    }, 1);
-				});
-			}
+					var resize_svg = function() {
+				    var view_bbox = view.getBBox();
+				    svg
+				      .style('height', view_bbox.height)
+				      .style('width', view_bbox.width);
+				    view.main.attr('transform', 'translate('+[0, view_bbox.height]+')');
+			      svg.style('margin-bottom', view_bbox.height - model.children[0].ascent + 'px');
+				  }
+
+				  view.init(function() {
+				    resize_svg();
+				    var view_bbox = view.getBBox();
+				    setTimeout(function() {
+				      var svg_w = svg.node().parentNode.clientWidth
+				        , view_w = view_bbox.width;
+				      if (view_w > 0.9*svg_w) {
+				        view.options.font_size *= 0.9 * svg_w / view_w;
+				        view.update_all(true);
+				        resize_svg();
+				      }
+				      svg.style('visibility', null);
+				    }, 1);
+					});
+				}
+			}, 3500);
+
 		};
 
 		return plugin;
