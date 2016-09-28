@@ -24,17 +24,17 @@ jsPsych.plugins["gmath-tutorial"] = (function() {
 
 	function init_trial_data(trial) {
 		var trial_data = gmath.extend({}, trial);
-		trial_data.tasks = trial.tasks.map(function(task, idx) { task_idx: idx
-			                                                     , eq: task.recording.options.eq
-																										       , instructions: task.instructions
-																										       , user_solution: ''
-																										       , attempts: 0, });
+		trial_data.tasks = trial.tasks.map(function(task, idx) { return { task_idx: idx
+			                                                              , eq: task.recording.options.eq
+																										       					, instructions: task.instructions
+																										       					, user_solution: ''
+																										       					, attempts: 0, } });
 		return trial_data;
 	}
 
 	function task_solution(trial, task_idx, derivation) {
 		gmath.TrialLogger.trial.tasks[task_idx].attempts++;
-		gmath.TrialLogger.trial.tasks[task_idx].user_solution = derivation.getLastModel.to_ascii();
+		gmath.TrialLogger.trial.tasks[task_idx].user_solution = derivation.getLastModel().to_ascii();
 	}
 
 	plugin.trial = function(display_element, trial) { // block, part
@@ -42,7 +42,6 @@ jsPsych.plugins["gmath-tutorial"] = (function() {
 
 		var trial_index = jsPsych.data.getLastTrialData().trial_index;
 		gmath.TrialLogger.startTrial(trial_index, init_trial_data(trial));
-		console.log(trial_index, jsPsych.currentTrial());
 
 		var container = display_element.append('div').attr('id', 'container');
 		container.append('h2').text(trial.title);
