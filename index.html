@@ -43,15 +43,15 @@ var stimuli = (function generate_stimuli() {
   , {"expression": "(5+3y)x=4y", "target": "(5+y*3)x=4y", "instructions": "Commute 3 to the right side of y"}
   , {"expression": "(5+3y)x=4y", "target": "(3y+5)x=4y", "instructions": "Commute 5 to the right side of 3y inside the parenthesis"}
   , {"expression": "(5+3y)x=4y", "target": "(3y+5)x=4y", "instructions": "Commute 3y to the left of the 5 inside the parenthesis"}
-  , {"expression": "(5+3y)x=4y", "target": "x=4y/(5+3y)", "instructions": "Bring parenthesised term (5+3y) over to the other side by dividing solving for x"}
-  , {"expression": "x(5+3y)=4y", "target": "x=4y/(5+3y)", "instructions": "Bring parenthesised term (5+3y) over to the other side by dividing solving for x"}
-  , {"expression": "x(5+3y)=4x", "target": "(5+3y)=4x/x", "instructions": "Divide by x to isolate y on the lefthand side"}
-  , {"expression": "(5+3y)x=4x", "target": "(5+3y)=4x/x", "instructions": "Divide by x to isolate y on the lefthand side"}
+  , {"expression": "(5+3y)x=4y", "target": "x=(4y)/(5+3y)", "instructions": "Bring parenthesised term (5+3y) over to the other side by dividing solving for x"}
+  , {"expression": "x(5+3y)=4y", "target": "x=(4y)/(5+3y)", "instructions": "Bring parenthesised term (5+3y) over to the other side by dividing solving for x"}
+  , {"expression": "x(5+3y)=4x", "target": "(5+3y)=(4x)/x", "instructions": "Divide by x to isolate y on the lefthand side"}
+  , {"expression": "(5+3y)x=4x", "target": "(5+3y)=(4x)/x", "instructions": "Divide by x to isolate y on the lefthand side"}
   , {"expression": "{abe}/{de^-2}", "target": "(abe*e^2)/d", "instructions": "Drag e^-2 into the numerator"}
   , {"expression": "{abe}/{de^-2}", "target": "{abe}/d*{1/e^-2}", "instructions": "Drag the e^-2 out of the denominator to the right of the expression"}
   , {"expression": "{abe}/{de^-2}", "target": "{ab(e^(1+2))}/d", "instructions": "Drag the e^-2 into the numerator and smoosh to combine."}
-  , {"expression": "x/{2y}*z", "target": "zx/2y", "instructions": "Commute the z into the numerator on the left of the x"}
-  , {"expression": "x/{2y}*z", "target": "xz/{2y}", "instructions": "Commute the z into the right side of the x in the numerator"}
+  , {"expression": "x/{2y}*z", "target": "(zx)/(2y)", "instructions": "Commute the z into the numerator on the left of the x"}
+  , {"expression": "x/{2y}*z", "target": "(xz)/{2y}", "instructions": "Commute the z into the right side of the x in the numerator"}
   , {"expression": "x/{2y}*z", "target": "x/(2y*(1/z))", "instructions": "Commute the z into the denominator"}
   , {"expression": "x/{2y}*z", "target": "z*x/{2y}", "instructions": "Commute the z to the left of the fraction"}
   , {"expression": "(2+3+4)/9", "target": "(4+5)/9", "instructions": "Smoosh the 2 with the 3 then commute the combined 2+3 to the right of the 4"}
