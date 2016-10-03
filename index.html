@@ -9,7 +9,7 @@
 <!-- Load the jspsych library and plugins -->
 <script src="jspsych-5.0.3/jspsych.js"></script>
 <script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
-<script src="jspsych-5.0.3/plugins/template/jspsych-plugin-template.js"></script>
+<script src="jspsych-5.0.3/plugins/jspsych-html.js"></script>
 <script src="jspsych-5.0.3/plugins/jspsych-gmath-gesture.js"></script>
 <script src="jspsych-5.0.3/plugins/jspsych-gmath-tutorial.js"></script>
 
@@ -30,21 +30,23 @@ div#welcome {
 
 <script>
 
+subject_id = gmath.uid().substr(1,6).toUpperCase();
+
 var time_limit = 15*60;
 setInterval(function() { time_limit--; }, 1000);
 
 // Could use "jsPsych.randomization.repeat" to create the data, but we want half to be one condition and half to be the other.
 var stimuli = (function generate_stimuli() {
-  var base_stimuli = [ {"expression": "x/((3+4))+y/((5+9))", "target": "x/((4+3))+y/((5+9))", "instructions": "Commute 3 to the right side of 4"}
-  , {"expression": "x/((3+4))+y/((5+9))", "target": "x/((4+3))+y/((5+9))", "instructions": "Commute 4 to the left side of 3"}
-  , {"expression": "x/((3+4))+y/((5+9))", "target": "x/7+y/((5+9))", "instructions": "In the denominator add 3 and 4 by clicking the operation"}
-  , {"expression": "x/((3+4))+y/((5+9))", "target": "x/7+y/((5+9))", "instructions": "In the denominator add 3 and 4 by clicking smooshing the numbers together"}
-  , {"expression": "x/((3+4))+y/((5+9))", "target": "y/((5+9))+ x/((3+4))", "instructions": "Commute the fraction x/(3+4) to the right of y/(3+9) "}
+  var base_stimuli = [ {"expression": "x/(3+4)+y/(5+9)", "target": "x/(4+3)+y/(5+9)", "instructions": "Commute 3 to the right side of 4"}
+  , {"expression": "x/(3+4)+y/(5+9)", "target": "x/(4+3)+y/(5+9)", "instructions": "Commute 4 to the left side of 3"}
+  , {"expression": "x/(3+4)+y/(5+9)", "target": "x/7+y/(5+9)", "instructions": "In the denominator add 3 and 4 by clicking the operation"}
+  , {"expression": "x/(3+4)+y/(5+9)", "target": "x/7+y/(5+9)", "instructions": "In the denominator add 3 and 4 by clicking or smooshing the numbers together"}
+  , {"expression": "x/(3+4)+y/(5+9)", "target": "y/(5+9)+ x/(3+4)", "instructions": "Commute the fraction x/(3+4) to the right of y/(3+9) "}
   , {"expression": "(5+3y)x=4y", "target": "(5+y*3)x=4y", "instructions": "Commute 3 to the right side of y"}
   , {"expression": "(5+3y)x=4y", "target": "(3y+5)x=4y", "instructions": "Commute 5 to the right side of 3y inside the parenthesis"}
   , {"expression": "(5+3y)x=4y", "target": "(3y+5)x=4y", "instructions": "Commute 3y to the left of the 5 inside the parenthesis"}
-  , {"expression": "(5+3y)x=4y", "target": "x=(4y)/(5+3y)", "instructions": "Bring parenthesised term (5+3y) over to the other side by dividing solving for x"}
-  , {"expression": "x(5+3y)=4y", "target": "x=(4y)/(5+3y)", "instructions": "Bring parenthesised term (5+3y) over to the other side by dividing solving for x"}
+  , {"expression": "(5+3y)x=4y", "target": "x=(4y)/(5+3y)", "instructions": "Bring parenthesised term (5+3y) over to the other side to divide, solving for x"}
+  , {"expression": "x(5+3y)=4y", "target": "x=(4y)/(5+3y)", "instructions": "Bring parenthesised term (5+3y) over to the other side to divide, solving for x"}
   , {"expression": "x(5+3y)=4x", "target": "(5+3y)=(4x)/x", "instructions": "Divide by x to isolate y on the lefthand side"}
   , {"expression": "(5+3y)x=4x", "target": "(5+3y)=(4x)/x", "instructions": "Divide by x to isolate y on the lefthand side"}
   , {"expression": "{abe}/{de^-2}", "target": "(abe*e^2)/d", "instructions": "Drag e^-2 into the numerator"}
@@ -73,23 +75,28 @@ var stimuli = (function generate_stimuli() {
   return condition_1.concat(condition_2);
 })();
 
-gmath.setupLogging({ experiment_id: 'gm_gestures_test', server: 'https://graspablemath.com:7010', enabled: true });
-// , server: 'http://127.0.0.1:7010'
+gmath.setupLogging({ experiment_id: 'gm_gestures_test_2', server: 'http://127.0.0.1:7010'/*'https://graspablemath.com:7010'*/, enabled: true });
 gmath.ui.CanvasFactory.defaultOptions.log_mouse_trajectories = true;
 
-var subject_id = gmath.uid().substr(1,6).toUpperCase();
+var check_consent = function(elem) {
+  if ($('#consent_checkbox').is(':checked')) return true;
+  else {
+    alert("If you wish to participate, you must check the box next to the statement 'I agree to participate in this study.'");
+    return false;
+  }
+  return false;
+};
 
-var welcome_message = '<div id="welcome"><p id="participant_id">Participant ID: <span>'+subject_id+'</span></p><p>Welcome to the experiment.</br>Press enter to begin.</p></div>';
-var consent_message = '<div id="welcome"><p>This is an experiment</br>Press enter to consent.</p></div>';
-var instructions = '<div id="welcome"><p>Instructions</p></div>';
-var welcome_block = { type: 'text', timeline: [{ text: welcome_message }, { text: consent_message }, { text: instructions }], cont_key: [13] };
+var consent_trial = { type: 'html', url: "consent.html", cont_btn: "start", check_fn: check_consent }
+  , welcome_trial = { type: 'html', url: "welcome.html", cont_btn: "start", cont_key: [13] }
+  , instructions_trial = { type: 'html', url: "instructions.html", cont_btn: "start", cont_key: [13] };
 
 // Pages (element in the timeline) with a number of gestures on each page (tasks in each timeline element).
 var tutorial_block = { type: 'gmath-tutorial'
                      , subject_id: subject_id
                      , timing_post_interaction: 2000 // time after end-of-interaction to screen blank
                      , timing_post_trial: 1000
-                     , on_finish: function() { gmath.TrialLogger.endTrial() }
+                     , on_finish: function() { gmath.TrialLogger.trial.tasks = JSON.stringify(gmath.TrialLogger.trial.tasks); gmath.TrialLogger.endTrial() }
                      , timeline: [ { title: 'arithmetics'
                                    , tasks: [ { recording: {"options":{"eq":"3+4","pos":[225,100],"selection_color":"#DE2F2F","color":"#676965","inactive_color":"#676965","no_handles":true,"normal_font":{"family":"Kalam","id":"_0d971991df54a54d"},"italic_font":{"family":"Kalam","id":"_0d971991df54a54d"},"font_baseline_shift":0.4,"font_ascent":0.9,"font_descent":0.2,"slanted_div_bar":true,"div_bar_height":0.07142857142857142,"no_history":true,"h_align":"center"},"events":[{"type":"touch","time":1429118062164,"altKey":false,"shiftKey":false,"fingers":[{"pos":[3.5,1]}]},{"type":"tap","time":1429118062250,"altKey":false,"shiftKey":false,"finger":{"pos":[3.5,1]}},{"type":"release","time":1429118062267,"altKey":false,"shiftKey":false,"fingers":[]}]}
                                               , correctAnswers: ['7']
@@ -177,9 +184,9 @@ var gesture_block = { type: 'gmath-gesture'
                     , loop_function: function() { return time_limit > 0 }
                     , timeline: stimuli };
 
-var farewell_block = { type: 'text', text: ['<div id="welcome"><p>Bye.</p></div>'], cont_key: [13] };
+var farewell_trial = { type: 'text', text: ['<div id="welcome"><p>Bye.</p></div>'], cont_key: [13] };
 
 // jsPsych.init({ timeline: [ gesture_block ] });
-jsPsych.init({ timeline: [ welcome_block, tutorial_block, gesture_block, farewell_block ] });
+jsPsych.init({ timeline: [ consent_trial, welcome_trial, instructions_trial, tutorial_block, gesture_block, farewell_trial ] });
 
 </script>

@@ -31,8 +31,9 @@
 
 			var container = d3_display_element.append('div').attr('id', 'gesture-trial-container');
 
-			var trial_index = jsPsych.data.getLastTrialData().trial_index;
-			gmath.TrialLogger.startTrial(trial_index, trial);
+			gmath.TrialLogger.startTrial(jsPsych.progress().current_trial_global+1, trial);
+			console.log(gmath.DataLogger.interaction_id)
+			// console.log(gmath.TrialLogger.trial);
 
       var canvas_opts = { vertical_scroll: false
                         , log_mouse_trajectories: true

@@ -40,8 +40,7 @@ jsPsych.plugins["gmath-tutorial"] = (function() {
 	plugin.trial = function(display_element, trial) {
 		display_element = d3.select(display_element[0]);
 
-		var trial_index = jsPsych.data.getLastTrialData().trial_index;
-		gmath.TrialLogger.startTrial(trial_index, init_trial_data(trial));
+		gmath.TrialLogger.startTrial(jsPsych.progress().current_trial_global+1, init_trial_data(trial));
 
 		d3.select('body').append('span')
 			.style('font-size', '16px')
