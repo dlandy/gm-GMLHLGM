@@ -27,6 +27,7 @@ jsPsych.plugins.html = (function() {
     }
 
     display_element.load(trial.url, function() {
+      if (trial.data) for (var key in trial.data) $('#'+key).html(trial.data[key]);
       var t0 = (new Date()).getTime();
       var finish = function() {
         if (trial.check_fn && !trial.check_fn(display_element)) return;

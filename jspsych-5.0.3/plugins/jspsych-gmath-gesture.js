@@ -24,9 +24,7 @@
 		plugin.trial = function(display_element, trial) {
 			var d3_display_element = d3.select(display_element[0]);
 
-			d3.select('body').append('span')
-				.style('font-size', '16px')
-				.style('color', '#bababa')
+			d3.select('body').append('span').attr('id', 'participant_id')
 				.text(trial.subject_id);
 
 			var container = d3_display_element.append('div').attr('id', 'gesture-trial-container');
@@ -67,20 +65,27 @@
                             , bg_rect_active_style: { fill: 'none', stroke: 'none' }
                             , bg_rect_hovering_style: { fill: 'none', stroke: 'none' }
                             , keep_in_container: false };
-      if (trial.gravity) derivation_opts.gravity = true;
+      if (trial.gravity) {
+      	derivation_opts.gravity = true;
+      	// disable tap actions
+      	derivation_opts.action_blacklist = ['FractionMagSimplificationAction', 'MultiplyNumbersAction', 'AddSubNumbersAction'];
+      }
 
       var div = container.append('div');
 
-      div.append('p')
-				.style({color :'#666', margin: '20px auto', 'font-size': '48px'})
-        .text(trial.instructions);
 			div.append('p')
-				.style({color: '#666', margin: '20px auto', 'font-size': '24px'}).append('i')
-				.text(trial.gravity ? 'non-interactive' : 'interactive');
+					.style({color :'#666', margin: '20px auto', 'font-size': '24px'})
+        	.text(trial.instructions)
+        .append('div')
+					.style({'font-size': '18px', 'text-align': 'center'}).append('i')
+					.text(trial.gravity ? 'static' : 'interactive')
+					.style('color', trial.gravity ? 'gray' : 'steelblue');
 
 			// show instructions, then show other content
-			setTimeout(function() {
-				var gm_container = div.append('div').classed('gm-container', true);
+
+				var gm_container = div.append('div').classed('gm-container', true).style('position', 'relative')
+				  .style('visibility', 'hidden');
+
 	      var canvas = new gmath.ui.CanvasFactory(gm_container.node(), canvas_opts);
 	      // FIXME: For some reason the svg within the canvas (deprecated, for the most part) has an altered position within the canvases on this page.
 	      // This is producing a horizontal scroll bar.  Removing SVGs here to prevent that.
@@ -95,6 +100,7 @@
 	        derivation.events.on('added_line.jspsych', null);
 	        derivation.getLastModel().events.on('end-of-interaction.jspsych', null);
 					gmath.TrialLogger.setCustomFields({ user_solution: derivation.getLastModel().to_ascii() })
+					gmath.TrialLogger.endTrial();
 	        setTimeout(function() {
 	          display_element.html('');
 	          jsPsych.finishTrial({});
@@ -113,7 +119,8 @@
 				if (trial.show_target) {
 					var target_div = container.append('div')
 						.style('float', 'right')
-						.style('margin-top', '10px');
+						.style('margin-top', '10px')
+						.style('visibility', 'hidden');
 					target_div.append('div')
 						.style('margin-right', '10px')
 						.style('font-size', '24px')
@@ -154,7 +161,11 @@
 				    }, 1);
 					});
 				}
-			}, 3500);
+
+			setTimeout(function() {
+				gm_container.style('visibility', null);
+				if (trial.show_target) target_div.style('visibility', null);
+			}, 2000);
 
 		};
 
