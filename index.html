@@ -32,36 +32,89 @@ div#welcome {
 
 subject_id = gmath.uid().substr(1,6).toUpperCase();
 
-var time_limit = 15*60;
+var time_limit = 13*60;
 setInterval(function() { time_limit--; }, 1000);
 
 // Could use "jsPsych.randomization.repeat" to create the data, but we want half to be one condition and half to be the other.
 var stimuli = (function generate_stimuli() {
-  var base_stimuli = [ {"expression": "x/(3+4)+y/(5+9)", "target": "x/(4+3)+y/(5+9)", "instructions": "Commute 3 to the right side of 4"}
-  , {"expression": "x/(3+4)+y/(5+9)", "target": "x/(4+3)+y/(5+9)", "instructions": "Commute 4 to the left side of 3"}
-  , {"expression": "x/(3+4)+y/(5+9)", "target": "x/7+y/(5+9)", "instructions": "In the denominator add 3 and 4 by clicking the operation"}
-  , {"expression": "x/(3+4)+y/(5+9)", "target": "x/7+y/(5+9)", "instructions": "In the denominator add 3 and 4 by clicking or smooshing the numbers together"}
-  , {"expression": "x/(3+4)+y/(5+9)", "target": "y/(5+9)+ x/(3+4)", "instructions": "Commute the fraction x/(3+4) to the right of y/(3+9) "}
-  , {"expression": "(5+3y)x=4y", "target": "(5+y*3)x=4y", "instructions": "Commute 3 to the right side of y"}
-  , {"expression": "(5+3y)x=4y", "target": "(3y+5)x=4y", "instructions": "Commute 5 to the right side of 3y inside the parenthesis"}
-  , {"expression": "(5+3y)x=4y", "target": "(3y+5)x=4y", "instructions": "Commute 3y to the left of the 5 inside the parenthesis"}
-  , {"expression": "(5+3y)x=4y", "target": "x=(4y)/(5+3y)", "instructions": "Bring parenthesised term (5+3y) over to the other side to divide, solving for x"}
-  , {"expression": "x(5+3y)=4y", "target": "x=(4y)/(5+3y)", "instructions": "Bring parenthesised term (5+3y) over to the other side to divide, solving for x"}
-  , {"expression": "x(5+3y)=4x", "target": "(5+3y)=(4x)/x", "instructions": "Divide by x to isolate y on the lefthand side"}
-  , {"expression": "(5+3y)x=4x", "target": "(5+3y)=(4x)/x", "instructions": "Divide by x to isolate y on the lefthand side"}
-  , {"expression": "{abe}/{de^-2}", "target": "(abe*e^2)/d", "instructions": "Drag e^-2 into the numerator"}
-  , {"expression": "{abe}/{de^-2}", "target": "{abe}/d*{1/e^-2}", "instructions": "Drag the e^-2 out of the denominator to the right of the expression"}
-  , {"expression": "{abe}/{de^-2}", "target": "{ab(e^(1+2))}/d", "instructions": "Drag the e^-2 into the numerator and smoosh to combine."}
-  , {"expression": "x/{2y}*z", "target": "(zx)/(2y)", "instructions": "Commute the z into the numerator on the left of the x"}
-  , {"expression": "x/{2y}*z", "target": "(xz)/{2y}", "instructions": "Commute the z into the right side of the x in the numerator"}
-  , {"expression": "x/{2y}*z", "target": "x/(2y*(1/z))", "instructions": "Commute the z into the denominator"}
-  , {"expression": "x/{2y}*z", "target": "z*x/{2y}", "instructions": "Commute the z to the left of the fraction"}
-  , {"expression": "(2+3+4)/9", "target": "(4+5)/9", "instructions": "Smoosh the 2 with the 3 then commute the combined 2+3 to the right of the 4"}
-  , {"expression": "(2+3+4)/9", "target": "(6+3)/9", "instructions": "Smoosh the 2 and 4 then commute the combined 2+4 to the left of the 3"}
-  , {"expression": "(2+3+4)/9", "target": "9/9", "instructions": "Smoosh the 2 with the 3 then the 4"}
-  , {"expression": "(2+3+4)/9", "target": "9/9", "instructions": "Smoosh the 4 with the 3 then the 2"}
-  , {"expression": "(2+3+4)/9", "target": "(3+4+2)/9", "instructions": "Commute the 2 all the way to the right in the nuemerator"}
-  , {"expression": "(2+3+4)/9", "target": "(4+2+3)/9", "instructions": "Commute the 4 all the way to the left in the numerator"} ];
+  var base_stimuli = [
+    {"expression": "4*5"
+                        , "target": "5*4"
+                        , "instructions": "Commute 4 to the right side of 5"}
+  , {"expression": "4*5"
+                        , "target": "5*4"
+                        , "instructions": "Commute 5 to the left side of 4"}
+  , {"expression": "4*5"
+                        , "target": "20"
+                        , "instructions": "Tap the times sign to multiply"}
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+                        , "target": "(3+4+2)/(9+5+6)+7/8"
+                        , "instructions": "Commute 2 to the right side of 3"}
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+                        , "target": "(3+2+4)/(9+5+6)+7/8"
+                        , "instructions": "Commute 3 to the left side of 2"}
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+                        , "target": "(2+4+3)/(5+6+9)+7/8"
+                        , "instructions": "Commute 9 to the right side of 6"}
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+                        , "target": "(2+4+3)/(6+9+5)+7/8"
+                        , "instructions": "Commute 6 to the left side of 9"}
+
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+                        , "target": "7/8+(2+4+3)/(9+5+6)"
+                        , "instructions": "Drag on the division bar to commute (2+4+3)/(9+5+6) to the right side of 7/8"}
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+                        , "target": "(2+4+3)/(9+5+6)+.875"
+                        , "instructions": "Click the division bar to divide 7 by 8"}
+  , {"expression": "8+2*5+3"
+                        , "target": "8+5*2+3"
+                        , "instructions": "Commute the 5 to the left of the 2"}
+  , {"expression": "8+2*5+3"
+                        , "target": "8+5*2+3"
+                        , "instructions": "Commute the 2 to the right of the 5"}
+  , {"expression": "8+2*5+3"
+                        , "target": "2*5+3+8"
+                        , "instructions": "Commute the 8 to the right of the 3"}
+  , {"expression": "8+2*5+3"
+                        , "target": "3+8+2*5"
+                        , "instructions": "Commute the 3 to the left of the 8"}
+ , {"expression": "8+2*5+3"
+                        , "target": "8+10+3"
+                        , "instructions": "Multiply by clicking the operator"}
+
+  , {"expression": "x/(3+4)+y/(5+9)"
+                        , "target": "x/(4+3)+y/(5+9)"
+                        , "instructions": "Commute 3 to the right side of 4"}
+  , {"expression": "x/(3+4)+y/(5+9)"
+                        , "target": "x/(4+3)+y/(5+9)"
+                        , "instructions": "Commute 4 to the left side of 3"}
+
+, {"expression": "8*3+5+2"
+                        , "target": "3*8+5+2"
+                        , "instructions": "Commute the 3 to the left of the 8"}
+
+, {"expression": "8*3+5+2"
+                        , "target": "3*8+5+2"
+                        , "instructions": "Commute the 8 to the right of the 3"}
+, {"expression": "8*3+5+2"
+                        , "target": "8*3+2+5"
+                        , "instructions": "Commute the 5 to the right of the 2"}
+, {"expression": "8*3+5+2"
+                        , "target": "8*3+2+5"
+                        , "instructions": "Commute the 2 to the left of the 5"}
+, {"expression": "7+5=4*3"
+                        , "target": "5+7=4*3"
+                        , "instructions": "Commute the 5 to the left of the 7"}
+, {"expression": "7+5=4*3"
+                        , "target": "5+7=4*3"
+                        , "instructions": "Commute the 7 to the right of the 5"}
+, {"expression": "7+5=4*3"
+                        , "target": "7+5=3*4"
+                        , "instructions": "Commute the 4 to the right of the 3"}
+, {"expression": "7+5=4*3"
+                        , "target": "7+5=3*4"
+                        , "instructions": "Commute the 3 to the left of the 4"}
+   ];
 
   var condition_1 = base_stimuli.map(function(s) { return gmath.deepCopy(s) })
     , condition_2 = base_stimuli.map(function(s) { return gmath.deepCopy(s) });
@@ -75,7 +128,7 @@ var stimuli = (function generate_stimuli() {
   return condition_1.concat(condition_2);
 })();
 
-gmath.setupLogging({ experiment_id: 'gm_gestures_test_2', server: 'http://127.0.0.1:7010'/*'https://graspablemath.com:7010'*/, enabled: true });
+gmath.setupLogging({ experiment_id: 'gm_gestures_test_3', server: 'http://127.0.0.1:7010'/*'https://graspablemath.com:7010'*/, enabled: true });
 gmath.ui.CanvasFactory.defaultOptions.log_mouse_trajectories = true;
 
 var check_consent = function(elem) {
