@@ -1,5 +1,87 @@
 function generate_stimuli() {
-  var base_stimuli = [
+
+  var base_stimuli_v2 = [
+    {"expression": "4*5"
+    , "target": "5*4"
+    , "instructions": "Commute 4 to the right side of 5"}
+  , {"expression": "4*5"
+    , "target": "5*4"
+    , "instructions": "Commute 5 to the left side of 4"}
+  , {"expression": "4*5"
+    , "target": "20"
+    , "instructions": "Tap the times sign to multiply" }
+  , {"expression": "4*5"
+    , "target": "20"
+    , "instructions": "Tap the *5 to multiply" }
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+    , "target": "(3+4+2)/(9+5+6)+7/8"
+    , "instructions": "Commute 2 to the right side of 3" }
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+    , "target": "(3+2+4)/(9+5+6)+7/8"
+    , "instructions": "Commute 3 to the left side of 2"}
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+    , "target": "(2+4+3)/(5+6+9)+7/8"
+    , "instructions": "Commute 9 to the right side of 6"}
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+    , "target": "(2+4+3)/(6+9+5)+7/8"
+    , "instructions": "Commute 6 to the left side of 9"}
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+    , "target": "7/8+(2+4+3)/(9+5+6)"
+    , "instructions": "Drag on the division bar to commute (2+4+3)/(9+5+6) to the right side of 7/8"}
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+    , "target": "7/8+(2+4+3)/(9+5+6)"
+    , "instructions": "Drag on the division bar to commute 7/8 to left side of (2+4+3)/(9+5+6)"}
+  , {"expression": "(2+4+3)/(9+5+6)+7/8"
+    , "target": "(2+4+3)/(9+5+6)+0.875"
+    , "instructions": "Click the division bar to divide 7 by 8"}
+  , {"expression": "8+2*5+3"
+    , "target": "8+5*2+3"
+    , "instructions": "Commute the 5 to the left of the 2"}
+  , {"expression": "8+2*5+3"
+    , "target": "8+5*2+3"
+    , "instructions": "Commute the 2 to the right of the 5"}
+  , {"expression": "8+2*5+3"
+    , "target": "2*5+3+8"
+    , "instructions": "Commute the 8 to the right of the 3"}
+  , {"expression": "8+2*5+3"
+    , "target": "3+8+2*5"
+    , "instructions": "Commute the 3 to the left of the 8"}
+  , {"expression": "8+2*5+3"
+    , "target": "8+10+3"
+    , "instructions": "Multiply by clicking the operator"}
+  , {"expression": "x/(3+4)+y/(5+9)"
+    , "target": "x/(4+3)+y/(5+9)"
+    , "instructions": "Commute 3 to the right side of 4"}
+  , {"expression": "x/(3+4)+y/(5+9)"
+    , "target": "x/(4+3)+y/(5+9)"
+    , "instructions": "Commute 4 to the left side of 3"}
+  , {"expression": "8*3+5+2"
+    , "target": "3*8+5+2"
+    , "instructions": "Commute the 3 to the left of the 8"}
+  , {"expression": "8*3+5+2"
+    , "target": "3*8+5+2"
+    , "instructions": "Commute the 8 to the right of the 3"}
+  , {"expression": "8*3+5+2"
+    , "target": "8*3+2+5"
+    , "instructions": "Commute the 5 to the right of the 2"}
+  , {"expression": "8*3+5+2"
+    , "target": "8*3+2+5"
+    , "instructions": "Commute the 2 to the left of the 5"}
+  , {"expression": "7+5=4*3"
+    , "target": "5+7=4*3"
+    , "instructions": "Commute the 5 to the left of the 7"}
+  , {"expression": "7+5=4*3"
+    , "target": "5+7=4*3"
+    , "instructions": "Commute the 7 to the right of the 5"}
+  , {"expression": "7+5=4*3"
+    , "target": "7+5=3*4"
+    , "instructions": "Commute the 4 to the right of the 3"}
+  , {"expression": "7+5=4*3"
+    , "target": "7+5=3*4"
+    , "instructions": "Commute the 3 to the left of the 4"}
+  ];
+
+  var base_stimuli_v1 = [
     {"expression": "x/(3+4)+1/2", "target": "x/(4+3)+1/2", "instructions": "Commute 3 to the right side of 4."}
   , {"expression": "x/(3+4)+1/2", "target": "x/(4+3)+1/2", "instructions": "Commute 4 to the left side of 3."}
   , {"expression": "x/(3+4)+1/2", "target": "x/7+1/2", "instructions": "In the denominator add 3 and 4 by clicking the operation."}
@@ -43,10 +125,10 @@ function generate_stimuli() {
     , condition_2 = base_stimuli.map(function(s) { return gmath.deepCopy(s) });
 
   for (var i=0; i<condition_1.length; i++) {
-    condition_1[i].gravity = true;
+    condition_1[i].gravity = false;
     condition_1[i].show_target = true;
     condition_1[i].target = (new gmath.AlgebraModel(condition_1[i].target)).to_ascii();
-    condition_2[i].gravity = false;
+    condition_2[i].gravity = true;
     condition_2[i].show_target = true;
     condition_2[i].target = (new gmath.AlgebraModel(condition_2[i].target)).to_ascii();
   }
@@ -59,8 +141,8 @@ function generate_stimuli() {
   // interleave blocks of 8 trials per condition
   var idx1 = 0, idx2 = 0;
   for (var i=0; i<2*base_stimuli.length; i++) {
-    if (Math.floor(i/8) % 2 === 0) result.push(condition_2[idx1++]);
-    else result.push(condition_1[idx2++]);
+    if (Math.floor(i/8) % 2 === 0 && idx1 < condition_1.length) result.push(condition_1[idx1++]);
+    else result.push(condition_2[idx2++]);
   }
 
   return result;
