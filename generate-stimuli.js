@@ -121,8 +121,8 @@ function generate_stimuli() {
   , {"expression": "x/(4*5)", "target": "x/20", "instructions": "Click to multiply the numbers."}
   ];
 
-  var condition_1 = base_stimuli.map(function(s) { return gmath.deepCopy(s) })
-    , condition_2 = base_stimuli.map(function(s) { return gmath.deepCopy(s) });
+  var condition_1 = base_stimuli_v2.map(function(s) { return gmath.deepCopy(s) })
+    , condition_2 = base_stimuli_v2.map(function(s) { return gmath.deepCopy(s) });
 
   for (var i=0; i<condition_1.length; i++) {
     condition_1[i].gravity = false;
@@ -140,7 +140,7 @@ function generate_stimuli() {
 
   // interleave blocks of 8 trials per condition
   var idx1 = 0, idx2 = 0;
-  for (var i=0; i<2*base_stimuli.length; i++) {
+  for (var i=0; i<2*base_stimuli_v2.length; i++) {
     if (Math.floor(i/8) % 2 === 0 && idx1 < condition_1.length) result.push(condition_1[idx1++]);
     else result.push(condition_2[idx2++]);
   }

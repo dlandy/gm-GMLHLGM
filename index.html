@@ -5,7 +5,7 @@
 <!-- Load D3 for GM -->
 <script src="libs/d3/d3.min.js"></script>
 <!-- Load Graspable Math -->
-<script src="libs/gmath/gmath.min.js"></script>
+<script src="libs/gmath/gmath-0.13.0-gm-gestures-v2.min.js"></script>
 <!-- Load the jspsych library and plugins -->
 <script src="jspsych-5.0.3/jspsych.js"></script>
 <script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
@@ -103,13 +103,13 @@ var gesture_block = { type: 'gmath-gesture'
 
 var debriefing = { type: 'html', url: 'html-templates/debriefing.html', data: { subject_id } };
 
-// jsPsych.init({ timeline: [ gesture_block ] });
-jsPsych.init({ timeline: [
-   welcome_trial
- , instructions_trial
- , tutorial_block
- , instructions_trial2
- , gesture_block
- , debriefing ] });
+jsPsych.init({ timeline: [ tutorial_block, gesture_block ] });
+// jsPsych.init({ timeline: [
+//    welcome_trial
+//  , instructions_trial
+//  , tutorial_block
+//  , instructions_trial2
+//  , gesture_block
+//  , debriefing ] });
 
 </script>
