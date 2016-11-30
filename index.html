@@ -40,7 +40,7 @@ div#welcome {
 
 <script>
 
-TEST_MODE = true;
+TEST_MODE = false;
 
 subject_id = gmath.uid().substr(1,6).toUpperCase();
 
@@ -50,7 +50,7 @@ setInterval(function() { time_limit--; }, 1000);
 if (TEST_MODE) {
   gmath.setupLogging({ experiment_id: 'gm_gestures_test_2', server: 'http://127.0.0.1:7010', enabled: true });
 } else {
-  gmath.setupLogging({ experiment_id: 'gm_gestures_v1', server: 'https://graspablemath.com:7010', enabled: true });
+  gmath.setupLogging({ experiment_id: 'gm_gestures_v2', server: 'https://graspablemath.com:7010', enabled: true });
 }
 gmath.Canvas.defaultOptions.log_mouse_trajectories = true;
 gmath.Derivation.defaultOptions.action_blacklist = ['CrossMultiplyFractionsAction'];
