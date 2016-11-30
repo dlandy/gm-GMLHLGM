@@ -16,7 +16,6 @@
 <script src="libs/bootstrap/bootstrap.min.js"></script>
 <!-- Load the stylesheet -->
 <link href="jspsych-5.0.3/css/jspsych.css" type="text/css" rel="stylesheet"></link>
-<!-- <link rel="stylesheet" href="libs/fonts/fonts.css"/> -->
 <link rel="stylesheet" href="libs/gmath/canvas.css"/>
 <link rel="stylesheet" href="libs/gmath/tutorial.css"/>
 <link rel="stylesheet" href="libs/bootstrap/bootstrap.min.css"/>
@@ -53,7 +52,8 @@ if (TEST_MODE) {
 } else {
   gmath.setupLogging({ experiment_id: 'gm_gestures_v1', server: 'https://graspablemath.com:7010', enabled: true });
 }
-gmath.ui.CanvasFactory.defaultOptions.log_mouse_trajectories = true;
+gmath.Canvas.defaultOptions.log_mouse_trajectories = true;
+gmath.Derivation.defaultOptions.action_blacklist = ['CrossMultiplyFractionsAction'];
 
 var check_consent = function(elem) {
   if ($('#consent_checkbox').is(':checked')) return true;
@@ -91,7 +91,7 @@ var loop_count = 1;
 var gesture_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
                     , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
-                    , timing_post_trial: 500
+                    , timing_post_trial: 100
                     , on_finish: function() {
                         if (time_limit <= 0) jsPsych.endCurrentTimeline();
                       }
@@ -103,13 +103,13 @@ var gesture_block = { type: 'gmath-gesture'
 
 var debriefing = { type: 'html', url: 'html-templates/debriefing.html', data: { subject_id } };
 
-jsPsych.init({ timeline: [ tutorial_block, gesture_block ] });
-// jsPsych.init({ timeline: [
-//    welcome_trial
-//  , instructions_trial
-//  , tutorial_block
-//  , instructions_trial2
-//  , gesture_block
-//  , debriefing ] });
+// jsPsych.init({ timeline: [ gesture_block ] });
+jsPsych.init({ timeline: [
+   welcome_trial
+ , instructions_trial
+ , tutorial_block
+ , instructions_trial2
+ , gesture_block
+ , debriefing ] });
 
 </script>
