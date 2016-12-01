@@ -5,7 +5,7 @@
 <!-- Load D3 for GM -->
 <script src="libs/d3/d3.min.js"></script>
 <!-- Load Graspable Math -->
-<script src="libs/gmath/gmath.min.js"></script>
+<script src="libs/gmath/gmath-0.13.0-gm-gestures-v2.min.js"></script>
 <!-- Load the jspsych library and plugins -->
 <script src="jspsych-5.0.3/jspsych.js"></script>
 <script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
@@ -16,7 +16,6 @@
 <script src="libs/bootstrap/bootstrap.min.js"></script>
 <!-- Load the stylesheet -->
 <link href="jspsych-5.0.3/css/jspsych.css" type="text/css" rel="stylesheet"></link>
-<!-- <link rel="stylesheet" href="libs/fonts/fonts.css"/> -->
 <link rel="stylesheet" href="libs/gmath/canvas.css"/>
 <link rel="stylesheet" href="libs/gmath/tutorial.css"/>
 <link rel="stylesheet" href="libs/bootstrap/bootstrap.min.css"/>
@@ -41,7 +40,7 @@ div#welcome {
 
 <script>
 
-TEST_MODE = true;
+TEST_MODE = false;
 
 subject_id = gmath.uid().substr(1,6).toUpperCase();
 
@@ -51,9 +50,10 @@ setInterval(function() { time_limit--; }, 1000);
 if (TEST_MODE) {
   gmath.setupLogging({ experiment_id: 'gm_gestures_test_2', server: 'http://127.0.0.1:7010', enabled: true });
 } else {
-  gmath.setupLogging({ experiment_id: 'gm_gestures_v1', server: 'https://graspablemath.com:7010', enabled: true });
+  gmath.setupLogging({ experiment_id: 'gm_gestures_v2', server: 'https://graspablemath.com:7010', enabled: true });
 }
-gmath.ui.CanvasFactory.defaultOptions.log_mouse_trajectories = true;
+gmath.Canvas.defaultOptions.log_mouse_trajectories = true;
+gmath.Derivation.defaultOptions.action_blacklist = ['CrossMultiplyFractionsAction'];
 
 var check_consent = function(elem) {
   if ($('#consent_checkbox').is(':checked')) return true;
@@ -91,7 +91,7 @@ var loop_count = 1;
 var gesture_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
                     , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
-                    , timing_post_trial: 500
+                    , timing_post_trial: 100
                     , on_finish: function() {
                         if (time_limit <= 0) jsPsych.endCurrentTimeline();
                       }

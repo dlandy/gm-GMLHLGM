@@ -62,6 +62,7 @@
       var derivation_opts = { collapsed_mode: true
                             , cloning_on: false
 														, draggable: false
+                            , no_handles: true
                             , bg_rect_active_style: { fill: 'none', stroke: 'none' }
                             , bg_rect_hovering_style: { fill: 'none', stroke: 'none' }
                             , keep_in_container: false };
@@ -74,96 +75,96 @@
       var div = container.append('div');
 
 			div.append('p')
-					.style({color :'#666', margin: '20px auto', 'font-size': '24px'})
+					.classed('hide_me', true)
+					.style({color :'#666', margin: '20px auto', 'font-size': '24px', 'visibility': 'hidden'})
         	.text(trial.instructions)
         .append('div')
-					.style({'font-size': '18px', 'text-align': 'center'}).append('i')
+        	.classed('hide_me', true)
+					.style({'font-size': '18px', 'text-align': 'center', 'visibility': 'hidden'}).append('i')
 					.text(trial.gravity ? 'static' : 'interactive')
 					.style('color', trial.gravity ? 'gray' : 'steelblue');
 
 			// show instructions, then show other content
 
-				var gm_container = div.append('div').classed('gm-container', true).style('position', 'relative')
-				  .style('visibility', 'hidden');
+			var gm_container = div.append('div').classed('gm-container', true).style('position', 'relative');
 
-	      var canvas = new gmath.ui.CanvasFactory(gm_container.node(), canvas_opts);
-	      // FIXME: For some reason the svg within the canvas (deprecated, for the most part) has an altered position within the canvases on this page.
-	      // This is producing a horizontal scroll bar.  Removing SVGs here to prevent that.
-	      div.select('.gm-canvas').select('.gm-canvas-svg').remove();
+      var canvas = new gmath.Canvas(gm_container.node(), canvas_opts);
+      // FIXME: For some reason the svg within the canvas (deprecated, for the most part) has an altered position within the canvases on this page.
+      // This is producing a horizontal scroll bar.  Removing SVGs here to prevent that.
+      div.select('.gm-canvas').selectAll('svg').remove();
 
-	      derivation_opts.eq = trial.expression;
-	      derivation_opts.pos = {x: 'center', y: 'center'};
-	      derivation_opts.v_align = 'center';
-	      var derivation = canvas.model.createDL(derivation_opts, function(dl) { dl.applyViewAlignment() });
-	      var eoi_callback = function() {
-	        derivation.getLastView().interactive(false);
-	        derivation.events.on('added_line.jspsych', null);
-	        derivation.getLastModel().events.on('end-of-interaction.jspsych', null);
-					gmath.TrialLogger.setCustomFields({ user_solution: derivation.getLastModel().to_ascii() })
-					gmath.TrialLogger.endTrial();
-	        setTimeout(function() {
-	          display_element.html('');
-	          jsPsych.finishTrial({});
-	        }, trial.timing_post_interaction);
-	      };
+      derivation_opts.eq = trial.expression;
+      derivation_opts.pos = {x: 'center', y: 'center'};
+      derivation_opts.v_align = 'center';
+      var derivation = canvas.model.createDL(derivation_opts, function(dl) { dl.applyViewAlignment() });
+      var eoi_callback = function() {
+        derivation.getLastView().interactive(false);
+        derivation.events.on('added_line.jspsych', null);
+        derivation.getLastModel().events.on('end-of-interaction.jspsych', null);
+				gmath.TrialLogger.setCustomFields({ user_solution: derivation.getLastModel().to_ascii() })
+				gmath.TrialLogger.endTrial();
+        setTimeout(function() {
+          display_element.html('');
+          jsPsych.finishTrial({});
+        }, trial.timing_post_interaction);
+      };
 
-	      derivation.getLastModel().events.on('end-of-interaction.jspsych', eoi_callback);
-	      derivation.events.on('added_line.jspsych', function() {
-	        derivation.getLastModel().events.on('end-of-interaction.jspsych', eoi_callback);
-	      });
+      derivation.getLastModel().events.on('end-of-interaction.jspsych', eoi_callback);
+      derivation.events.on('added_line.jspsych', function() {
+        derivation.getLastModel().events.on('end-of-interaction.jspsych', eoi_callback);
+      });
 
-				var condition_div = container.append('div')
+			var condition_div = container.append('div')
+				.style('float', 'right')
+				.style('margin-top', '10px');
+
+			if (trial.show_target) {
+				var target_div = container.append('div')
 					.style('float', 'right')
-					.style('margin-top', '10px');
+					.style('margin-top', '10px')
+					.style('visibility', 'hidden');
+				target_div.append('div')
+					.style('margin-right', '10px')
+					.style('font-size', '24px')
+					.style('vertical-align', 'top')
+					.text('target: ');
 
-				if (trial.show_target) {
-					var target_div = container.append('div')
-						.style('float', 'right')
-						.style('margin-top', '10px')
-						.style('visibility', 'hidden');
-					target_div.append('div')
-						.style('margin-right', '10px')
-						.style('font-size', '24px')
-						.style('vertical-align', 'top')
-						.text('target: ');
-					var svg = target_div.append('svg')
-						.style('width', '100%')
-						.style('overflow', 'visible')
-						.style('margin-left', '0.5em')
-						.style('display', 'inline-block')
-						.style('visibility', 'hidden');
-					var font_size = 36;
+				var target_algebra_div = target_div.append('div')
+					.style('display', 'inline-block')
 
-					var model = new gmath.AlgebraModel(trial.target)
-	  			var view = new gmath.AlgebraView(model, svg, {interactive: false, inactive_color: '#000000', font_size: font_size, v_align: 'alphabetic', h_align: 'left' });
+				var div = target_algebra_div.append('div')
+					.style('width', '100%')
+					.style('overflow', 'visible')
+					.style('visibility', 'hidden');
 
-					var resize_svg = function() {
-				    var view_bbox = view.getBBox();
-				    svg
-				      .style('height', view_bbox.height)
-				      .style('width', view_bbox.width);
-				    view.main.attr('transform', 'translate('+[0, view_bbox.height]+')');
-			      svg.style('margin-bottom', view_bbox.height - model.children[0].ascent + 'px');
-				  }
+				var font_size = 36;
 
-				  view.init(function() {
-				    resize_svg();
-				    var view_bbox = view.getBBox();
-				    setTimeout(function() {
-				      var svg_w = svg.node().parentNode.clientWidth
-				        , view_w = view_bbox.width;
-				      if (view_w > 0.9*svg_w) {
-				        view.options.font_size *= 0.9 * svg_w / view_w;
-				        view.update_all(true);
-				        resize_svg();
-				      }
-				      svg.style('visibility', null);
-				    }, 1);
-					});
-				}
+				var model = new gmath.AlgebraModel(trial.target)
+  			var view = new gmath.AlgebraView( model
+  				                              , div.node()
+  				                              , { interactive: false
+  				                              	, inactive_color: '#000000'
+  				                              	, font_size: font_size
+  				                              	, v_align: 'alphabetic'
+  				                              	, h_align: 'left' }
+  				                              , function() {
+			    setTimeout(function() {
+		        resize_target_algebra_div();
+			      div.style('visibility', null);
+			    }, 1);
+				});
+
+				var resize_target_algebra_div = function() {
+			    var view_bbox = view.getBBox();
+			    target_algebra_div
+			      .style('height', view_bbox.height+'px')
+			      .style('width', view_bbox.width+'px');
+			    view.main.style('transform', 'translate(0px,'+view_bbox.height+'px)');
+			  }
+			}
 
 			setTimeout(function() {
-				gm_container.style('visibility', null);
+				d3.selectAll('.hide_me').style('visibility', null);
 				if (trial.show_target) target_div.style('visibility', null);
 			}, 2000);
 
