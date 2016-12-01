@@ -41,10 +41,11 @@ div#welcome {
 <script>
 
 TEST_MODE = false;
+DURATION_IN_SEC = 15*60;
 
 subject_id = gmath.uid().substr(1,6).toUpperCase();
 
-var time_limit=0; // will be set after tutorial block
+var time_limit=DURATION_IN_SEC; // will be reset after tutorial block
 setInterval(function() { time_limit--; }, 1000);
 
 if (TEST_MODE) {
@@ -77,7 +78,7 @@ var tutorial_block = { type: 'gmath-tutorial'
                      , on_finish: function() {
                         gmath.TrialLogger.trial.tasks = JSON.stringify(gmath.TrialLogger.trial.tasks);
                         gmath.TrialLogger.endTrial();
-                        time_limit = 20*60;
+                        time_limit = DURATION_IN_SEC;
                      }
                      , timeline: tutorial_timeline
                    };

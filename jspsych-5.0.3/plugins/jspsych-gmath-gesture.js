@@ -75,14 +75,16 @@
       var div = container.append('div');
 
 			div.append('p')
-					.classed('hide_me', true)
+					.classed('show_me', true)
 					.style({color :'#666', margin: '20px auto', 'font-size': '24px', 'visibility': 'hidden'})
         	.text(trial.instructions)
         .append('div')
-        	.classed('hide_me', true)
-					.style({'font-size': '18px', 'text-align': 'center', 'visibility': 'hidden'}).append('i')
+        	.classed('show_me', true)
+					.style({'font-size': '18px', 'text-align': 'center', 'visibility': 'hidden'})
+          .style('background-color', trial.gravity ? null : 'rgba(70, 130, 180, 0.33)')
+          .append('span')
 					.text(trial.gravity ? 'static' : 'interactive')
-					.style('color', trial.gravity ? 'gray' : 'steelblue');
+					.style('color', 'gray');
 
 			// show instructions, then show other content
 
@@ -92,6 +94,11 @@
       // FIXME: For some reason the svg within the canvas (deprecated, for the most part) has an altered position within the canvases on this page.
       // This is producing a horizontal scroll bar.  Removing SVGs here to prevent that.
       div.select('.gm-canvas').selectAll('svg').remove();
+      div.select('.gm-canvas').append('div')
+        .style({ 'position': 'absolute'
+               , 'width': '100%'
+               , 'height': '100%' })
+        .classed('remove_me', true);
 
       derivation_opts.eq = trial.expression;
       derivation_opts.pos = {x: 'center', y: 'center'};
@@ -164,8 +171,10 @@
 			}
 
 			setTimeout(function() {
-				d3.selectAll('.hide_me').style('visibility', null);
+        d3.selectAll('.math div.text').style('user-select', 'none');
+				d3.selectAll('.show_me').style('visibility', null);
 				if (trial.show_target) target_div.style('visibility', null);
+        d3.selectAll('.remove_me').remove();
 			}, 2000);
 
 		};
