@@ -22,6 +22,11 @@
 
 <script src="tutorial-playbacks.js"></script>
 <script src="generate-stimuli.js"></script>
+<script src="generate-pretest-stimuli.js"></script>
+<script src="generate-instruction-stimuli.js"></script>
+<script src="generate-training-stimuli.js"></script>
+<script src="generate-posttest-stimuli.js"></script>
+<script src="generate-generalization-stimuli.js"></script>
 </head>
 
 <style>
@@ -68,7 +73,9 @@ var check_consent = function(elem) {
 var consent_trial = { type: 'html', url: "html-templates/consent.html", data: { subject_id }, cont_btn: "start", check_fn: check_consent }
   , welcome_trial = { type: 'html', url: "html-templates/welcome.html", data: { subject_id }, cont_btn: "start", cont_key: [13] }
   , instructions_trial = { type: 'html', url: "html-templates/instructions.html", data: { subject_id }, cont_btn: "start", cont_key: [13] }
-  , instructions_trial2 = { type: 'html', url: "html-templates/instructions2.html", data: { subject_id }, cont_btn: "start", cont_key: [13] }
+  , training_trial = { type: 'html', url: "html-templates/training.html", data: { subject_id }, cont_btn: "start", cont_key: [13] }
+  , posttest_trial = { type: 'html', url: "html-templates/posttest.html", data: { subject_id }, cont_btn: "start", cont_key: [13] }
+  , generalization_trial = { type: 'html', url: "html-templates/generalization.html", data: { subject_id }, cont_btn: "start", cont_key: [13] }
 
 // Pages (element in the timeline) with a number of gestures on each page (tasks in each timeline element).
 var tutorial_block = { type: 'gmath-tutorial'
@@ -84,13 +91,14 @@ var tutorial_block = { type: 'gmath-tutorial'
                    };
 
 
-var stimuli = generate_stimuli();
+var pretest_stimuli = generate_pretest_stimuli();
 
-var loop_count = 1;
 
 // Loop through stimuli until the time limit has been reached.
-var gesture_block = { type: 'gmath-gesture'
+var pretest_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
+                    , questions: ["Type your answer here:"]
+
                     , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
                     , timing_post_trial: 100
                     , on_finish: function() {
@@ -98,19 +106,109 @@ var gesture_block = { type: 'gmath-gesture'
                       }
                     , randomize_order: false
                     , loop_function: function() {
-                        return loop_count++ < 2;
+                        return false;
                     }
-                    , timeline: stimuli };
+                    , timeline: pretest_stimuli };
+
+var instruction_stimuli = generate_instruction_stimuli();
+
+
+// Loop through stimuli until the time limit has been reached.
+var instruction_block = { type: 'gmath-gesture'
+                    , subject_id: subject_id
+                    , questions: ["Type your answer here:"]
+
+                    , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
+                    , timing_post_trial: 100
+                    , on_finish: function() {
+                        if (time_limit <= 0) jsPsych.endCurrentTimeline();
+                      }
+                    , randomize_order: false
+                    , loop_function: function() {
+                        return false;
+                    }
+                    , timeline: instruction_stimuli };
+
+var training_stimuli = generate_training_stimuli();
+
+
+// Loop through stimuli until the time limit has been reached.
+var training_block = { type: 'gmath-gesture'
+                    , subject_id: subject_id
+                    , questions: ["Type your answer here:"]
+
+                    , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
+                    , timing_post_trial: 100
+                    , on_finish: function() {
+                        if (time_limit <= 0) jsPsych.endCurrentTimeline();
+                      }
+                    , randomize_order: false
+                    , loop_function: function() {
+                        return false;
+                    }
+                    , timeline: training_stimuli };
+
+var posttest_stimuli = generate_posttest_stimuli();
+
+
+var posttest_block = { type: 'gmath-gesture'
+                    , subject_id: subject_id
+                    , questions: ["Type your answer here:"]
+
+                    , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
+                    , timing_post_trial: 100
+                    , on_finish: function() {
+                        if (time_limit <= 0) jsPsych.endCurrentTimeline();
+                      }
+                    , randomize_order: false
+                    , loop_function: function() {
+                        return false;
+                    }
+                    , timeline: posttest_stimuli };
+
+var generalization_stimuli = generate_generalization_stimuli();
+
+
+var generalization_block = { type: 'gmath-gesture'
+                    , subject_id: subject_id
+                    , questions: ["Type your answer here:"]
+
+                    , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
+                    , timing_post_trial: 100
+                    , on_finish: function() {
+                        if (time_limit <= 0) jsPsych.endCurrentTimeline();
+                      }
+                    , randomize_order: false
+                    , loop_function: function() {
+                        return false;
+                    }
+                    , timeline: generalization_stimuli };
+
 
 var debriefing = { type: 'html', url: 'html-templates/debriefing.html', data: { subject_id } };
 
 // jsPsych.init({ timeline: [ gesture_block ] });
+//jsPsych.init({ timeline: [
+//   welcome_trial
+// , instructions_trial
+// , tutorial_block
+// , instructions_trial2
+// , gesture_block
+// , debriefing ] });
+
+
 jsPsych.init({ timeline: [
    welcome_trial
+ , pretest_block
  , instructions_trial
- , tutorial_block
- , instructions_trial2
- , gesture_block
+ , instruction_block
+ , training_trial
+ , training_block
+ , posttest_trial
+ , posttest_block
+ , generalization_trial
+ , generalization_block
  , debriefing ] });
+
 
 </script>

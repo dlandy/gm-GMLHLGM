@@ -29,6 +29,23 @@
 
 			var container = d3_display_element.append('div').attr('id', 'gesture-trial-container');
 
+
+
+      if (typeof trial.rows == 'undefined') {
+        trial.rows = [];
+        for (var i = 0; i < trial.questions.length; i++) {
+          trial.rows.push(1);
+        }
+      }
+      if (typeof trial.columns == 'undefined') {
+        trial.columns = [];
+        for (var i = 0; i < trial.questions.length; i++) {
+          trial.columns.push(40);
+        }
+      }
+
+
+
 			gmath.TrialLogger.startTrial(jsPsych.progress().current_trial_global+1, trial);
 			console.log(gmath.DataLogger.interaction_id)
 			// console.log(gmath.TrialLogger.trial);
@@ -83,7 +100,8 @@
 					.style({'font-size': '18px', 'text-align': 'center', 'visibility': 'hidden'})
           .style('background-color', trial.gravity ? null : 'rgba(70, 130, 180, 0.33)')
           .append('span')
-					.text(trial.gravity ? 'static' : 'interactive')
+				//	.text(trial.gravity ? 'static' : 'interactive')
+          .text('')
 					.style('color', 'gray');
 
 			// show instructions, then show other content
@@ -105,15 +123,15 @@
       derivation_opts.v_align = 'center';
       var derivation = canvas.model.createDL(derivation_opts, function(dl) { dl.applyViewAlignment() });
       var eoi_callback = function() {
-        derivation.getLastView().interactive(false);
+        //derivation.getLastView().interactive(false);
         derivation.events.on('added_line.jspsych', null);
         derivation.getLastModel().events.on('end-of-interaction.jspsych', null);
 				gmath.TrialLogger.setCustomFields({ user_solution: derivation.getLastModel().to_ascii() })
 				gmath.TrialLogger.endTrial();
-        setTimeout(function() {
-          display_element.html('');
-          jsPsych.finishTrial({});
-        }, trial.timing_post_interaction);
+        //setTimeout(function() {
+        //  display_element.html('');
+        //  jsPsych.finishTrial({});
+        //}, trial.timing_post_interaction);
       };
 
       derivation.getLastModel().events.on('end-of-interaction.jspsych', eoi_callback);
@@ -170,12 +188,66 @@
 			  }
 			}
 
+ // add questions
+
+    for (var i = 0; i < trial.questions.length; i++) {
+      // create div
+      display_element.append($('<div>', {
+        "id": 'jspsych-survey-text-' + i,
+        "class": 'jspsych-survey-text-question'
+      }));
+
+      // add question text
+      $("#jspsych-survey-text-" + i).append('<p class="jspsych-survey-text">' + trial.questions[i] + '</p>');
+
+      // add text box
+      $("#jspsych-survey-text-" + i).append('<textarea name="#jspsych-survey-text-response-' + i + '" cols="' + trial.columns[i] + '" rows="' + trial.rows[i] + '"></textarea>');
+    }
+
+
+   // add submit button
+    display_element.append($('<button>', {
+      'id': 'jspsych-survey-text-next',
+      'class': 'jspsych-btn jspsych-survey-text'
+    }));
+    $("#jspsych-survey-text-next").html('Submit Answers');
+    $("#jspsych-survey-text-next").click(function() {
+      // measure response time
+      var endTime = (new Date()).getTime();
+      var response_time = endTime - startTime;
+
+      // create object to hold responses
+      var question_data = {};
+      $("div.jspsych-survey-text-question").each(function(index) {
+        var id = "Q" + index;
+        var val = $(this).children('textarea').val();
+        var obje = {};
+        obje[id] = val;
+        $.extend(question_data, obje);
+      });
+
+      // save data
+      var trialdata = {
+        "rt": response_time,
+        "responses": JSON.stringify(question_data)
+      };
+
+      display_element.html('');
+
+      //gmath.TrialLogger.setCustomFields({ user_solution: JSON.stringify(question_data), "rt": response_time })
+      gmath.TrialLogger.setCustomFields()
+      // next trial
+      jsPsych.finishTrial(trialdata);
+    });
+
+
 			setTimeout(function() {
         d3.selectAll('.math div.text').style('user-select', 'none');
 				d3.selectAll('.show_me').style('visibility', null);
 				if (trial.show_target) target_div.style('visibility', null);
         d3.selectAll('.remove_me').remove();
-			}, 2000);
+			}, 000);
+    var startTime = (new Date()).getTime();
 
 		};
 
