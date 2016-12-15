@@ -46,6 +46,7 @@
 
 
 
+
 			gmath.TrialLogger.startTrial(jsPsych.progress().current_trial_global+1, trial);
 			console.log(gmath.DataLogger.interaction_id)
 			// console.log(gmath.TrialLogger.trial);
@@ -58,7 +59,7 @@
                         , insert_btn: false
                         , formula_btn: false
                         , homework_btn: false
-                        , mode_btns: true
+
                         , mode_btns: false // [ {type: 'radio', group: 'mode', state: true,  label: 'transform', icon: 'glyphicon glyphicon-random'}
                         						 // , {type: 'radio', group: 'mode', state: false, label: 'arrange', icon: 'glyphicon glyphicon-move'} ]
                         , undo_btn: false

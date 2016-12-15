@@ -5,7 +5,7 @@
 <!-- Load D3 for GM -->
 <script src="libs/d3/d3.min.js"></script>
 <!-- Load Graspable Math -->
-<script src="libs/gmath/gmath-0.13.0-gm-gestures-v2.min.js"></script>
+<script src="libs/gmath/gmath.min.js"></script>
 <!-- Load the jspsych library and plugins -->
 <script src="jspsych-5.0.3/jspsych.js"></script>
 <script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
@@ -60,6 +60,21 @@ if (TEST_MODE) {
 }
 gmath.Canvas.defaultOptions.log_mouse_trajectories = true;
 gmath.Derivation.defaultOptions.action_blacklist = ['CrossMultiplyFractionsAction'];
+  function getAllActionNames() {
+      return Object.values(gmath.actions).map(function(action) {
+        return action.name;
+      });
+    }
+
+    function version1(condition) {
+      gmath.AlgebraView.defaultOptions = gmath.extend(gmath.AlgebraView.defaultOptions, {
+        condition: condition === 'a' ? '1a' : '1b'
+      })
+      gmath.AlgebraModel.defaultOptions.action_blacklist.splice(getAllActionNames().indexOf('AddendMatchingAction'), 1);
+      console.log('hi')
+    }
+  //  version1('a')
+
 
 var check_consent = function(elem) {
   if ($('#consent_checkbox').is(':checked')) return true;
