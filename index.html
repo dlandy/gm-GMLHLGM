@@ -5,7 +5,7 @@
 <!-- Load D3 for GM -->
 <script src="libs/d3/d3.min.js"></script>
 <!-- Load Graspable Math -->
-<script src="libs/gmath/gmath.min.js"></script>
+<script src="libs/gmath/gmath-gmlhlgm2.min.js"></script>
 <!-- Load the jspsych library and plugins -->
 <script src="jspsych-5.0.3/jspsych.js"></script>
 <script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
@@ -108,7 +108,7 @@ var tutorial_block = { type: 'gmath-tutorial'
 
 var pretest_stimuli = generate_pretest_stimuli();
 
-
+paths = [];
 // Loop through stimuli until the time limit has been reached.
 var pretest_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
@@ -124,6 +124,24 @@ var pretest_block = { type: 'gmath-gesture'
                         return false;
                     }
                     , timeline: pretest_stimuli };
+
+var pretest_stimuli_2 = generate_pretest_stimuli();
+
+var pretest_review_block = { type: 'gmath-gesture'
+                            , subject_id: subject_id
+                            , review: true
+                            , questions: ["Type your answer here:"]
+
+                            , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
+                            , timing_post_trial: 100
+                            , on_finish: function() {
+                                if (time_limit <= 0) jsPsych.endCurrentTimeline();
+                              }
+                            , randomize_order: false
+                            , loop_function: function() {
+                                return false;
+                            }
+                            , timeline: pretest_stimuli_2 };
 
 var instruction_stimuli = generate_instruction_stimuli();
 
@@ -215,6 +233,7 @@ var debriefing = { type: 'html', url: 'html-templates/debriefing.html', data: { 
 jsPsych.init({ timeline: [
    welcome_trial
  , pretest_block
+ , pretest_review_block
  , instructions_trial
  , instruction_block
  , training_trial

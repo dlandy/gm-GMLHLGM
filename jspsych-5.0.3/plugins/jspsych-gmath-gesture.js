@@ -112,7 +112,7 @@
       var canvas = new gmath.Canvas(gm_container.node(), canvas_opts);
       // FIXME: For some reason the svg within the canvas (deprecated, for the most part) has an altered position within the canvases on this page.
       // This is producing a horizontal scroll bar.  Removing SVGs here to prevent that.
-      div.select('.gm-canvas').selectAll('svg').remove();
+      div.select('.gm-canvas').selectAll('svg').style('left', '0px');
       div.select('.gm-canvas').append('div')
         .style({ 'position': 'absolute'
                , 'width': '100%'
@@ -200,18 +200,27 @@
       }));
 
 
-      // add question text
-      $("#jspsych-survey-text-" + i).append('<p class="jspsych-survey-text">' + trial.questions[i] + '</p>');
+      // // add question text
+      // $("#jspsych-survey-text-" + i).append('<p class="jspsych-survey-text">' + trial.questions[i] + '</p>');
 
-      // add text box
-      $("#jspsych-survey-text-" + i).append('<input type="numeric" name="jspsych-survey-text-response-' + i + '" id="jspsych-survey-text-response-' + i + '" cols="' + trial.columns[i] + '" rows="' + trial.rows[i] + '"></input>');
+      // // add text box
+      // $("#jspsych-survey-text-" + i).append('<input type="numeric" name="jspsych-survey-text-response-' + i + '" id="jspsych-survey-text-response-' + i + '" cols="' + trial.columns[i] + '" rows="' + trial.rows[i] + '"></input>');
     }
+
+  // add mode button
+  if (!trial.review) {
+    display_element.append($('<button>', {
+        'id': 'jspsych-survey-text-draw',
+        'class': 'jspsych-btn' // jspsych-survey-text'
+      }));
+    $("#jspsych-survey-text-draw").html('Write your answer!');
+  }
 
 
    // add submit button
     display_element.append($('<button>', {
       'id': 'jspsych-survey-text-next',
-      'class': 'jspsych-btn jspsych-survey-text'
+      'class': 'jspsych-btn' //jspsych-survey-text'
     }));
     $("#jspsych-survey-text-next").html('Submit Answer');
 console.log(trial)
@@ -221,7 +230,7 @@ console.log(trial.answer)
       $('#jspsych-survey-text-0')[0].hidden=true
 
       $('#jspsych-survey-text-response-0')[0].hidden=true
-    } else {
+    } else if (!trial.review) {
       console.log('no')
       $('#jspsych-survey-text-next')[0].hidden=true
     }
@@ -229,6 +238,12 @@ console.log(trial.answer)
       // measure response time
       var endTime = (new Date()).getTime();
       var response_time = endTime - startTime;
+
+      if (!trial.review) {
+        paths.push(canvas.model.paths());
+      } else {
+        paths[jsPsych.progress().current_trial_global-6] = canvas.model.paths();
+      }
 
       // create object to hold responses
       var question_data = {};
@@ -253,6 +268,16 @@ console.log(trial.answer)
       // next trial
       jsPsych.finishTrial(trialdata);
     });
+
+   $("#jspsych-survey-text-draw").click(function() {
+     canvas.model.setMode('draw');
+     unhide();
+   });
+
+   if (trial.review) {
+    canvas.model.paths(paths[jsPsych.progress().current_trial_global-6]);
+    canvas.model.setMode('draw');
+   }
 
 
 			setTimeout(function() {
