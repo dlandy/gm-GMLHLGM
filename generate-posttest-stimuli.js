@@ -3,22 +3,22 @@ function generate_posttest_stimuli() {
   var base_stimuli_v2 = [
     {"expression": '5 + 9 + 2 = "_" + 2'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
   , {"expression": '9 + 4 + 6 = "_" + 6'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
   , {"expression": '7 + 5 + 8 = 7 + "_"'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
   , {"expression": '8 + 6 + 9 = 8 + "_"'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
   , {"expression": '3 + 4 + 5 = "_" + 5'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
   , {"expression": '5 + 3 + 6 = 5 + "_"'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
   ];
 
 

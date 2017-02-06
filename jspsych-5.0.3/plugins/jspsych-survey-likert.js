@@ -51,7 +51,7 @@ jsPsych.plugins['survey-likert'] = (function() {
       'id': 'jspsych-survey-likert-next',
       'class': 'jspsych-survey-likert jspsych-btn'
     }));
-    $("#jspsych-survey-likert-next").html('Submit Answers');
+    $("#jspsych-survey-likert-next").html('Submit Answer');
     $("#jspsych-survey-likert-next").click(function() {
       // measure response time
       var endTime = (new Date()).getTime();

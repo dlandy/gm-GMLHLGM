@@ -3,13 +3,16 @@ function generate_instruction_stimuli() {
   var base_stimuli_v2 = [
     {"expression": '6 + 3 + 4 = "_" + 4'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""
+    , "answer": "none"}
   , {"expression": '9 + 2 + 3 = "_" + 3'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""
+    , "answer": "none"}
   , {"expression": '8 + 4 + 6 = "_" + 6'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""
+    , "answer": "none"}
 
   ];
 

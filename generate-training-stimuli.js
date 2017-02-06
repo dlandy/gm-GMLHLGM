@@ -3,45 +3,45 @@ function generate_training_stimuli() {
   var base_stimuli_v2 = [
     {"expression": '5 + 6 + 3 = "_" + 3'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
   , {"expression": '3 + 2 + 8 = "_" + 8'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
 
   , {"expression": '9 + 3 + 4 = "_" + 4'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
   , {"expression": '4 + 5 + 7 = "_" + 7'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
 
   , {"expression": '4 + 2 + 7 = "_" + 7'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
   , {"expression": '2 + 4 + 9 = "_" + 9'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
 
   , {"expression": '7 + 2 + 5 = "_" + 5'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
   , {"expression": '5 + 2 + 6 = "_" + 6'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
 
   , {"expression": '8 + 3 + 2 = "_" + 2'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
   , {"expression": '7 + 4 + 2 = "_" + 2'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
 
   , {"expression": '5 + 3 + 2 = "_" + 2'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
   , {"expression": '6 + 2 + 5  = "_" + 5'
     , "target": ""
-    , "instructions": "What goes in the blank?"}
+    , "instructions": ""}
 
   ];
 

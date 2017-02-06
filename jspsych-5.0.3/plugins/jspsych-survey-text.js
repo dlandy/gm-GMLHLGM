@@ -55,6 +55,7 @@ jsPsych.plugins['survey-text'] = (function() {
 
       // add text box
       $("#jspsych-survey-text-" + i).append('<textarea name="#jspsych-survey-text-response-' + i + '" cols="' + trial.columns[i] + '" rows="' + trial.rows[i] + '"></textarea>');
+      //$("#jspsych-survey-text-" + i).append('<input type="numeric" name="#jspsych-survey-text-response-' + i + '">');
     }
 
     // add submit button
@@ -62,7 +63,7 @@ jsPsych.plugins['survey-text'] = (function() {
       'id': 'jspsych-survey-text-next',
       'class': 'jspsych-btn jspsych-survey-text'
     }));
-    $("#jspsych-survey-text-next").html('Submit Answers');
+    $("#jspsych-survey-text-next").html('Submit Answer');
     $("#jspsych-survey-text-next").click(function() {
       // measure response time
       var endTime = (new Date()).getTime();

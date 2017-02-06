@@ -47,8 +47,8 @@
 
 
 
-			gmath.TrialLogger.startTrial(jsPsych.progress().current_trial_global+1, trial);
-			console.log(gmath.DataLogger.interaction_id)
+			//gmath.TrialLogger.startTrial(jsPsych.progress().current_trial_global+1, trial);
+			//console.log(gmath.DataLogger.interaction_id)
 			// console.log(gmath.TrialLogger.trial);
 
       var canvas_opts = { vertical_scroll: false
@@ -127,12 +127,9 @@
         //derivation.getLastView().interactive(false);
         derivation.events.on('added_line.jspsych', null);
         derivation.getLastModel().events.on('end-of-interaction.jspsych', null);
-				gmath.TrialLogger.setCustomFields({ user_solution: derivation.getLastModel().to_ascii() })
-				gmath.TrialLogger.endTrial();
-        //setTimeout(function() {
-        //  display_element.html('');
-        //  jsPsych.finishTrial({});
-        //}, trial.timing_post_interaction);
+			//	gmath.TrialLogger.setCustomFields({ user_solution: derivation.getLastModel().to_ascii() })
+			//	gmath.TrialLogger.endTrial();
+
       };
 
       derivation.getLastModel().events.on('end-of-interaction.jspsych', eoi_callback);
@@ -190,19 +187,24 @@
 			}
 
  // add questions
+      unhide = function(d){
+        $('#jspsych-survey-text-next')[0].hidden=false;
+      }
 
     for (var i = 0; i < trial.questions.length; i++) {
       // create div
       display_element.append($('<div>', {
         "id": 'jspsych-survey-text-' + i,
-        "class": 'jspsych-survey-text-question'
+        "class": 'jspsych-survey-text-question',
+        "onchange" : "unhide()"
       }));
+
 
       // add question text
       $("#jspsych-survey-text-" + i).append('<p class="jspsych-survey-text">' + trial.questions[i] + '</p>');
 
       // add text box
-      $("#jspsych-survey-text-" + i).append('<textarea name="#jspsych-survey-text-response-' + i + '" cols="' + trial.columns[i] + '" rows="' + trial.rows[i] + '"></textarea>');
+      $("#jspsych-survey-text-" + i).append('<input type="numeric" name="jspsych-survey-text-response-' + i + '" id="jspsych-survey-text-response-' + i + '" cols="' + trial.columns[i] + '" rows="' + trial.rows[i] + '"></input>');
     }
 
 
@@ -211,7 +213,18 @@
       'id': 'jspsych-survey-text-next',
       'class': 'jspsych-btn jspsych-survey-text'
     }));
-    $("#jspsych-survey-text-next").html('Submit Answers');
+    $("#jspsych-survey-text-next").html('Submit Answer');
+console.log(trial)
+console.log(trial.answer)
+    if(trial.answer && trial.answer=="none"){
+      console.log('yes')
+      $('#jspsych-survey-text-0')[0].hidden=true
+
+      $('#jspsych-survey-text-response-0')[0].hidden=true
+    } else {
+      console.log('no')
+      $('#jspsych-survey-text-next')[0].hidden=true
+    }
     $("#jspsych-survey-text-next").click(function() {
       // measure response time
       var endTime = (new Date()).getTime();
@@ -236,7 +249,7 @@
       display_element.html('');
 
       //gmath.TrialLogger.setCustomFields({ user_solution: JSON.stringify(question_data), "rt": response_time })
-      gmath.TrialLogger.setCustomFields()
+     // gmath.TrialLogger.setCustomFields()
       // next trial
       jsPsych.finishTrial(trialdata);
     });
@@ -251,6 +264,10 @@
     var startTime = (new Date()).getTime();
 
 		};
+
+
+
+
 
 		return plugin;
 })();

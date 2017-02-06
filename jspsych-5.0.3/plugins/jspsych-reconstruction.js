@@ -76,7 +76,7 @@ jsPsych.plugins['reconstruction'] = (function() {
         'id': 'jspsych-reconstruction-next',
         'class': 'jspsych-btn jspsych-reconstruction'
       }));
-      $("#jspsych-reconstruction-next").html('Submit Answers');
+      $("#jspsych-reconstruction-next").html('Submit Answer');
       $("#jspsych-reconstruction-next").click(endTrial);
     }
 
