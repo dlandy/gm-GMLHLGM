@@ -113,7 +113,7 @@ paths = [];
 var pretest_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
                     , questions: ["Type your answer here:"]
-
+                    , draw_mode: true
                     , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
                     , timing_post_trial: 100
                     , on_finish: function() {
@@ -129,6 +129,7 @@ var pretest_stimuli_2 = generate_pretest_stimuli();
 
 var pretest_review_block = { type: 'gmath-gesture'
                             , subject_id: subject_id
+                            , draw_mode: true
                             , review: true
                             , questions: ["Type your answer here:"]
 

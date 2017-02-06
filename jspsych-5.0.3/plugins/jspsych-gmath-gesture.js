@@ -199,16 +199,17 @@
         "onchange" : "unhide()"
       }));
 
+      if (!trial.draw_mode) {
+        // add question text
+        $("#jspsych-survey-text-" + i).append('<p class="jspsych-survey-text">' + trial.questions[i] + '</p>');
 
-      // // add question text
-      // $("#jspsych-survey-text-" + i).append('<p class="jspsych-survey-text">' + trial.questions[i] + '</p>');
-
-      // // add text box
-      // $("#jspsych-survey-text-" + i).append('<input type="numeric" name="jspsych-survey-text-response-' + i + '" id="jspsych-survey-text-response-' + i + '" cols="' + trial.columns[i] + '" rows="' + trial.rows[i] + '"></input>');
+        // add text box
+        $("#jspsych-survey-text-" + i).append('<input type="numeric" name="jspsych-survey-text-response-' + i + '" id="jspsych-survey-text-response-' + i + '" cols="' + trial.columns[i] + '" rows="' + trial.rows[i] + '"></input>');
+      }
     }
 
   // add mode button
-  if (!trial.review) {
+  if (!trial.review && trial.draw_mode) {
     display_element.append($('<button>', {
         'id': 'jspsych-survey-text-draw',
         'class': 'jspsych-btn' // jspsych-survey-text'
@@ -242,7 +243,7 @@ console.log(trial.answer)
       if (!trial.review) {
         paths.push(canvas.model.paths());
       } else {
-        paths[jsPsych.progress().current_trial_global-6] = canvas.model.paths();
+        paths[jsPsych.progress().current_trial_global-7] = canvas.model.paths();
       }
 
       // create object to hold responses
@@ -275,7 +276,7 @@ console.log(trial.answer)
    });
 
    if (trial.review) {
-    canvas.model.paths(paths[jsPsych.progress().current_trial_global-6]);
+    canvas.model.paths(paths[jsPsych.progress().current_trial_global-7]);
     canvas.model.setMode('draw');
    }
 
