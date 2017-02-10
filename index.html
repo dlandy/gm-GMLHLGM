@@ -107,13 +107,16 @@ var tutorial_block = { type: 'gmath-tutorial'
 
 
 var pretest_stimuli = generate_pretest_stimuli();
-
 paths = [];
 // Loop through stimuli until the time limit has been reached.
 var pretest_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
                     , questions: ["Type your answer here:"]
-                    , draw_mode: true
+                    , draw_settings: { on_at_start: true
+                                     , on_off_btn: false
+                                     , eraser_btn: true
+                                     , init_with_paths: false }
+                    // , draw_mode: true
                     , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
                     , timing_post_trial: 100
                     , on_finish: function() {
@@ -126,11 +129,14 @@ var pretest_block = { type: 'gmath-gesture'
                     , timeline: pretest_stimuli };
 
 var pretest_stimuli_2 = generate_pretest_stimuli();
-
 var pretest_review_block = { type: 'gmath-gesture'
                             , subject_id: subject_id
-                            , draw_mode: true
-                            , review: true
+                            , draw_settings: { on_at_start: false
+                                             , on_off_btn: true
+                                             , eraser_btn: true
+                                             , init_with_paths: true }
+                            // , draw_mode: true
+                            // , review: true
                             , questions: ["Type your answer here:"]
 
                             , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
@@ -145,8 +151,6 @@ var pretest_review_block = { type: 'gmath-gesture'
                             , timeline: pretest_stimuli_2 };
 
 var instruction_stimuli = generate_instruction_stimuli();
-
-
 // Loop through stimuli until the time limit has been reached.
 var instruction_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
@@ -164,8 +168,6 @@ var instruction_block = { type: 'gmath-gesture'
                     , timeline: instruction_stimuli };
 
 var training_stimuli = generate_training_stimuli();
-
-
 // Loop through stimuli until the time limit has been reached.
 var training_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
@@ -183,8 +185,6 @@ var training_block = { type: 'gmath-gesture'
                     , timeline: training_stimuli };
 
 var posttest_stimuli = generate_posttest_stimuli();
-
-
 var posttest_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
                     , questions: ["Type your answer here:"]
@@ -201,8 +201,6 @@ var posttest_block = { type: 'gmath-gesture'
                     , timeline: posttest_stimuli };
 
 var generalization_stimuli = generate_generalization_stimuli();
-
-
 var generalization_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
                     , questions: ["Type your answer here:"]
