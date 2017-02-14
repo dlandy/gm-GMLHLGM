@@ -175,7 +175,7 @@ jsPsych.plugins["gmath-gesture"] = (function() {
         .attr('rows', trial.rows[i]);
 
       if (i === 0) {
-        first_text_and_input.text = text_p;
+        first_text_and_input.text = text;
         first_text_and_input.input = input;
       }
     }
@@ -193,6 +193,7 @@ jsPsych.plugins["gmath-gesture"] = (function() {
     , off = 'Turn off writing';
   function init_on_off_button(container, trial, canvas_model) {
     var btn = container.append('button')
+      .attr('id', 'jspsych-survey-on-off-btn')
       .classed('jspsych-btn', true)
       .style({ 'margin-top': '10px'
              , 'margin-right': '10px' })
@@ -224,14 +225,17 @@ jsPsych.plugins["gmath-gesture"] = (function() {
     btn.on('click', function() {
       var current_mode = canvas_model.setMode();
       if (current_mode === 'edit') {
+        container.select('#jspsych-survey-on-off-btn').html(off);
         btn.html(erase);
         canvas_model.setMode('draw');
       }
       else if (current_mode === 'draw') {
+        container.select('#jspsych-survey-on-off-btn').html(off);
         btn.html(write);
         canvas_model.setMode('erase');
       }
       else if (current_mode === 'erase') {
+        container.select('#jspsych-survey-on-off-btn').html(off);
         btn.html(erase);
         canvas_model.setMode('draw');
       }
@@ -257,14 +261,16 @@ jsPsych.plugins["gmath-gesture"] = (function() {
       var end_time = (new Date()).getTime();
       var response_time = end_time - start_time;
 
-      if (!trial.draw_settings.init_with_paths) {
-        // paths.push(canvas_model.paths());
-        trial.shared.push(canvas_model.paths());
-      } else {
-        // If we started with paths on the canvas, we want to update that data in case
-        // the paths were changed.
-        // paths[jsPsych.progress().current_trial_global-7] = canvas_model.paths();
-        trial.shared[trial.review_idx] = canvas_model.paths();
+      if (!no_drawing(trial)) {
+        if (!trial.draw_settings.init_with_paths) {
+          // paths.push(canvas_model.paths());
+          trial.shared.push(canvas_model.paths());
+        } else {
+          // If we started with paths on the canvas, we want to update that data in case
+          // the paths were changed.
+          // paths[jsPsych.progress().current_trial_global-7] = canvas_model.paths();
+          trial.shared[trial.review_idx] = canvas_model.paths();
+        }
       }
 
       // create object to hold responses
