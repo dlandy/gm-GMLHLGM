@@ -243,14 +243,6 @@ var jsPsych = (function() {
 
         // create a TimelineNode for each element in the timeline
         for (var i = 0; i < parameters.timeline.length; i++) {
-          // v1
-          // var element = parameters.timeline[i];
-          // var _parameters = $.extend(true, {}, node_data, element);
-          // if (element.shared && typeof(element.shared) === 'string' && parameters.shared) _parameters.shared = parameters.shared[element.shared];
-          // else if (parameters.shared) _parameters.shared = parameters.shared;
-          // timeline.push(new TimelineNode(_parameters, self, i));
-
-          // v2
           var element = parameters.timeline[i];
           var timeline_node;
 
@@ -296,9 +288,6 @@ var jsPsych = (function() {
           console.error('No plugin loaded for trials of type "' + trial_type + '"');
         }
         trial_data = $.extend(true, {}, parameters);
-        // v1
-        // if (parameters.shared) trial_data.shared = parameters.shared;
-        // v2
         if (parameters.shared && parent_node.shared_str) trial_data.shared = parameters.shared;
         else if (parameters.shared) delete trial_data.shared;
       }
