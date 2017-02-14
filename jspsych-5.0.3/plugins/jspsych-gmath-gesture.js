@@ -21,7 +21,7 @@ jsPsych.plugins["gmath-gesture"] = (function() {
   // in create: save_trial, timing_post_trial, progress_fn, eq, var, sol, stage, task_id, data
   // data: time_to_action : null, time_to_submit : null, userInput : null, accuracy : false, task_id: trial.task_id
 
-	plugin.trial = function(container, trial) {
+	plugin.trial = function(display_element, trial) {
 		var d3_display_element = d3.select(display_element[0]);
 
 		d3.select('body').append('span').attr('id', 'participant_id')
@@ -39,19 +39,32 @@ jsPsych.plugins["gmath-gesture"] = (function() {
 			.style('margin-top', '10px');
 
     if (no_drawing(trial)) {
-      init_text_input_field(display_element, trial);
-    } else {
-      init_mode_buttons(display_element, trial);
-      init_on_mode_listener(canvas_model);
+      var first_text_and_input = init_text_input_field(d3_display_element, trial);
+      if (trial.answer && trial.answer == "none") {
+        first_text_and_input.text.style('visibility', 'hidden');
+        first_text_and_input.input.style('visibility', 'hidden');
+      }
+    }
+    else {
+      if (trial.draw_settings.on_at_start) {
+        canvas_model.setMode('draw');
+      }
+      if (trial.draw_settings.on_off_btn) {
+        init_on_off_button(d3_display_element, trial, canvas_model);
+      }
+      if (trial.draw_settings.mode_switch_btn) {
+        init_mode_button(d3_display_element, trial, canvas_model);
+      }
+      if (trial.draw_settings.init_with_paths) {
+        canvas_model.getElementsOfType('derivation').forEach(function(derivation) {
+          derivation.getLastView().interactive(false);
+        });
+        canvas_model.paths(trial.shared[trial.review_idx]);
+      }
     }
 
-    init_submit_button(display_element);
-    init_on_submit_listener(display_element, trial, canvas_model, (new Date()).getTime());
-
-    if (trial.review) {
-      canvas_model.paths(paths[jsPsych.progress().current_trial_global-7]);
-      canvas_model.setMode('draw');
-    }
+    var submit_btn = init_submit_button(d3_display_element);
+    init_on_submit_listener(d3_display_element, submit_btn, trial, canvas_model, (new Date()).getTime());
 
 		setTimeout(function() {
       d3.selectAll('.math div.text').style('user-select', 'none');
@@ -99,7 +112,8 @@ jsPsych.plugins["gmath-gesture"] = (function() {
                       , fullscreen_btn: false
                       , toolbar_pos: 'top'
                       , reset_btn: false
-                      , help_btn: false };
+                      , help_btn: false
+                      , inactive_color: '#333' };
 
     var derivation_opts = { collapsed_mode: true
                           , cloning_on: false
@@ -142,79 +156,115 @@ jsPsych.plugins["gmath-gesture"] = (function() {
   }
 
   function init_text_input_field(container, trial) {
+    var first_text_and_input = {};
     for (var i = 0; i < trial.questions.length; i++) {
       var div = container.append('div')
         .attr('id', 'jspsych-survey-text-'+i)
         .classed('jspsych-survey-text-question', true)
         .on('change', unhide); // triggered when the user hits enter
 
-      div.append('p')
+      var text = div.append('p')
         .classed('jspsych-survey-text', true)
         .text(trial.questions[i]);
 
-      div.append('input')
+      var input = div.append('input')
         .attr('id', 'jspsych-survey-text-response-'+i)
         .attr('name', 'jspsych-survey-text-response-'+i)
         .attr('type', 'numeric')
         .attr('cols', trial.columns[i])
         .attr('rows', trial.rows[i]);
+
+      if (i === 0) {
+        first_text_and_input.text = text_p;
+        first_text_and_input.input = input;
+      }
     }
-
-    if (trial.answer && trial.answer=="none") {
-      $('#jspsych-survey-text-0')[0].hidden = true
-      $('#jspsych-survey-text-response-0')[0].hidden = true
-    } else if (!trial.review) {
-      $('#jspsych-survey-text-next')[0].hidden = true
-    }
-
-      // container.append($('<div>', {
-      //   "id": 'jspsych-survey-text-' + i,
-      //   "class": 'jspsych-survey-text-question',
-      //   "onchange" : "unhide()" // triggered when the user hits enter
-      // }));
-
-      // // add question text
-      // $("#jspsych-survey-text-" + i).append('<p class="jspsych-survey-text">' + trial.questions[i] + '</p>');
-      // // add text box
-      // $("#jspsych-survey-text-" + i).append('<input type="numeric" name="jspsych-survey-text-response-' + i + '" id="jspsych-survey-text-response-' + i + '" cols="' + trial.columns[i] + '" rows="' + trial.rows[i] + '"></input>');
-    }
-
+    return first_text_and_input;
   }
 
   function no_drawing(trial) {
-    return Object.keys(trial.draw_settings).every(function(setting) { return !trial.draw_settings[setting] });
+    return !trial.draw_settings ||
+      Object.keys(trial.draw_settings).every(function(setting) { return !trial.draw_settings[setting] });
   }
 
-  function init_mode_buttons(container, trial) {
-    display_element.append($('<button>', {
-      'id': 'jspsych-survey-text-draw',
-      'class': 'jspsych-btn'
-    }));
-    $("#jspsych-survey-text-draw").html('Write your answer!');
+  var write = 'Switch to write mode'
+    , erase = 'Switch to erase mode'
+    , on = 'Turn on writing'
+    , off = 'Turn off writing';
+  function init_on_off_button(container, trial, canvas_model) {
+    var btn = container.append('button')
+      .classed('jspsych-btn', true)
+      .style({ 'margin-top': '10px'
+             , 'margin-right': '10px' })
+      .html(on);
+
+    btn.on('click', function() {
+      var current_mode = canvas_model.setMode();
+      if (current_mode === 'edit') {
+        container.select('#jspsych-survey-mode-btn').html(erase);
+        btn.html(off);
+        canvas_model.setMode('draw');
+      }
+      else if (current_mode === 'draw' || current_mode === 'erase') {
+        container.select('#jspsych-survey-mode-btn').html(write);
+        btn.html(on);
+        canvas_model.setMode('edit');
+      }
+    });
+  }
+
+  function init_mode_button(container, trial, canvas_model) {
+    var btn = container.append('button')
+      .attr('id', 'jspsych-survey-mode-btn')
+      .classed('jspsych-btn', true)
+      .style({ 'margin-top': '10px'
+             , 'margin-right': '10px' })
+      .html(canvas_model.setMode() === 'edit' ? write : erase);
+
+    btn.on('click', function() {
+      var current_mode = canvas_model.setMode();
+      if (current_mode === 'edit') {
+        btn.html(erase);
+        canvas_model.setMode('draw');
+      }
+      else if (current_mode === 'draw') {
+        btn.html(write);
+        canvas_model.setMode('erase');
+      }
+      else if (current_mode === 'erase') {
+        btn.html(erase);
+        canvas_model.setMode('draw');
+      }
+    });
   }
 
   function init_submit_button(container) {
-    display_element.append($('<button>', {
-      'id': 'jspsych-survey-text-next',
-      'class': 'jspsych-btn'
-    }));
-    $("#jspsych-survey-text-next").html('Submit Answer');
+    return container.append('button')
+      .attr('id', 'jspsych-survey-text-next')
+      .classed('jspsych-btn', true)
+      .style({ 'margin-top': '10px'
+             , 'margin-right': '10px' })
+      .html('Submit Answer');
   }
 
   function unhide() {
-    $('#jspsych-survey-text-next')[0].hidden = false;
+    d3.select('#jspsych-survey-text-next').style('visibility', 'visible');
   }
 
-  function init_on_submit_listener(display_element, trial, canvas_model, start_time) {
-    $("#jspsych-survey-text-next").click(function() {
+  function init_on_submit_listener(display_element, submit_btn, trial, canvas_model, start_time) {
+    submit_btn.on('click', function() {
       // measure response time
       var end_time = (new Date()).getTime();
       var response_time = end_time - start_time;
 
-      if (!trial.review) {
-        paths.push(canvas_model.paths());
+      if (!trial.draw_settings.init_with_paths) {
+        // paths.push(canvas_model.paths());
+        trial.shared.push(canvas_model.paths());
       } else {
-        paths[jsPsych.progress().current_trial_global-7] = canvas_model.paths();
+        // If we started with paths on the canvas, we want to update that data in case
+        // the paths were changed.
+        // paths[jsPsych.progress().current_trial_global-7] = canvas_model.paths();
+        trial.shared[trial.review_idx] = canvas_model.paths();
       }
 
       // create object to hold responses
@@ -235,14 +285,7 @@ jsPsych.plugins["gmath-gesture"] = (function() {
 
       display_element.html('');
       jsPsych.finishTrial(trialdata);
-    });
-  }
-
-  function init_mode_listener(canvas_model) {
-    $("#jspsych-survey-text-draw").click(function() {
-      canvas_model.setMode('draw');
-      unhide();
-    });
+    })
   }
 
 	return plugin;

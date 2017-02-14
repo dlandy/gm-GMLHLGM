@@ -77,6 +77,7 @@ var jsPsych = (function() {
     // create experiment timeline
     timeline = new TimelineNode({
       timeline: opts.timeline
+    , shared: opts.shared
     });
 
     // preloading
@@ -234,6 +235,7 @@ var jsPsych = (function() {
       if (typeof parameters.timeline !== 'undefined') {
         // extract all of the node level data and parameters
         var node_data = $.extend(true, {}, parameters);
+
         delete node_data.timeline;
         delete node_data.conditional_function;
         delete node_data.loop_function;
@@ -241,7 +243,32 @@ var jsPsych = (function() {
 
         // create a TimelineNode for each element in the timeline
         for (var i = 0; i < parameters.timeline.length; i++) {
-          timeline.push(new TimelineNode($.extend(true, {}, node_data, parameters.timeline[i]), self, i));
+          // v1
+          // var element = parameters.timeline[i];
+          // var _parameters = $.extend(true, {}, node_data, element);
+          // if (element.shared && typeof(element.shared) === 'string' && parameters.shared) _parameters.shared = parameters.shared[element.shared];
+          // else if (parameters.shared) _parameters.shared = parameters.shared;
+          // timeline.push(new TimelineNode(_parameters, self, i));
+
+          // v2
+          var element = parameters.timeline[i];
+          var timeline_node;
+
+          if (parameters.shared && parameters.timeline && element.shared && element.timeline) {
+            var _parameters = $.extend(true, {}, node_data, element);
+            _parameters.shared_str = element.shared; // passing along the string name of a shared datum
+            _parameters.shared = parameters.shared;
+            timeline_node = new TimelineNode(_parameters, self, i);
+          } else if (parameters.shared_str && parameters.shared) {
+            var _parameters = $.extend(true, {}, node_data, element);
+            _parameters.shared = parameters.shared[parameters.shared_str];
+            self.shared_str = parameters.shared_str;
+            timeline_node = new TimelineNode(_parameters, self, i);
+          } else {
+            timeline_node = new TimelineNode($.extend(true, {}, node_data, element), self, i);
+          }
+
+          timeline.push(timeline_node);
         }
         // store the loop function if it exists
         if (typeof parameters.loop_function !== 'undefined') {
@@ -268,8 +295,12 @@ var jsPsych = (function() {
         } else if (typeof jsPsych.plugins[trial_type] == 'undefined') {
           console.error('No plugin loaded for trials of type "' + trial_type + '"');
         }
-        // create a deep copy of the parameters for the trial
         trial_data = $.extend(true, {}, parameters);
+        // v1
+        // if (parameters.shared) trial_data.shared = parameters.shared;
+        // v2
+        if (parameters.shared && parent_node.shared_str) trial_data.shared = parameters.shared;
+        else if (parameters.shared) delete trial_data.shared;
       }
     }();
 
@@ -286,6 +317,10 @@ var jsPsych = (function() {
         return 1;
       }
       return length;
+    }
+
+    this.data = function() {
+      return trial_data || timeline;
     }
 
     // recursively get the next trial to run.

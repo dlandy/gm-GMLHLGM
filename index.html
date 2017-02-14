@@ -71,7 +71,6 @@ gmath.Derivation.defaultOptions.action_blacklist = ['CrossMultiplyFractionsActio
         condition: condition === 'a' ? '1a' : '1b'
       })
       gmath.AlgebraModel.defaultOptions.action_blacklist.splice(getAllActionNames().indexOf('AddendMatchingAction'), 1);
-      console.log('hi')
     }
     version1('a')
 
@@ -107,16 +106,16 @@ var tutorial_block = { type: 'gmath-tutorial'
 
 
 var pretest_stimuli = generate_pretest_stimuli();
-paths = [];
+var pretest_paths = [];
 // Loop through stimuli until the time limit has been reached.
 var pretest_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
                     , questions: ["Type your answer here:"]
+                    , shared: 'pretest_paths'
                     , draw_settings: { on_at_start: true
                                      , on_off_btn: false
-                                     , eraser_btn: true
+                                     , mode_switch_btn: true
                                      , init_with_paths: false }
-                    // , draw_mode: true
                     , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
                     , timing_post_trial: 100
                     , on_finish: function() {
@@ -129,16 +128,15 @@ var pretest_block = { type: 'gmath-gesture'
                     , timeline: pretest_stimuli };
 
 var pretest_stimuli_2 = generate_pretest_stimuli();
+pretest_stimuli_2.forEach(function(stimulus, idx) { stimulus.review_idx = idx });
 var pretest_review_block = { type: 'gmath-gesture'
                             , subject_id: subject_id
+                            , shared: 'pretest_paths'
                             , draw_settings: { on_at_start: false
                                              , on_off_btn: true
-                                             , eraser_btn: true
+                                             , mode_switch_btn: true
                                              , init_with_paths: true }
-                            // , draw_mode: true
-                            // , review: true
                             , questions: ["Type your answer here:"]
-
                             , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
                             , timing_post_trial: 100
                             , on_finish: function() {
@@ -155,7 +153,6 @@ var instruction_stimuli = generate_instruction_stimuli();
 var instruction_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
                     , questions: ["Type your answer here:"]
-
                     , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
                     , timing_post_trial: 100
                     , on_finish: function() {
@@ -172,7 +169,6 @@ var training_stimuli = generate_training_stimuli();
 var training_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
                     , questions: ["Type your answer here:"]
-
                     , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
                     , timing_post_trial: 100
                     , on_finish: function() {
@@ -184,11 +180,17 @@ var training_block = { type: 'gmath-gesture'
                     }
                     , timeline: training_stimuli };
 
+
 var posttest_stimuli = generate_posttest_stimuli();
+var posttest_paths = [];
 var posttest_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
+                    , shared: 'posttest_paths'
                     , questions: ["Type your answer here:"]
-
+                    , draw_settings: { on_at_start: true
+                                     , on_off_btn: false
+                                     , mode_switch_btn: true
+                                     , init_with_paths: false }
                     , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
                     , timing_post_trial: 100
                     , on_finish: function() {
@@ -200,11 +202,31 @@ var posttest_block = { type: 'gmath-gesture'
                     }
                     , timeline: posttest_stimuli };
 
+var posttest_stimuli_2 = generate_posttest_stimuli();
+posttest_stimuli_2.forEach(function(stimulus, idx) { stimulus.review_idx = idx; });
+var posttest_review_block = { type: 'gmath-gesture'
+                            , subject_id: subject_id
+                            , shared: 'posttest_paths'
+                            , draw_settings: { on_at_start: false
+                                             , on_off_btn: true
+                                             , mode_switch_btn: true
+                                             , init_with_paths: true }
+                            , questions: ["Type your answer here:"]
+                            , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
+                            , timing_post_trial: 100
+                            , on_finish: function() {
+                                if (time_limit <= 0) jsPsych.endCurrentTimeline();
+                              }
+                            , randomize_order: false
+                            , loop_function: function() {
+                                return false;
+                            }
+                            , timeline: posttest_stimuli_2 };
+
 var generalization_stimuli = generate_generalization_stimuli();
 var generalization_block = { type: 'gmath-gesture'
                     , subject_id: subject_id
                     , questions: ["Type your answer here:"]
-
                     , timing_post_interaction: 1000 // time after end-of-interaction to screen blank
                     , timing_post_trial: 100
                     , on_finish: function() {
@@ -229,19 +251,21 @@ var debriefing = { type: 'html', url: 'html-templates/debriefing.html', data: { 
 // , debriefing ] });
 
 
-jsPsych.init({ timeline: [
-   welcome_trial
- , pretest_block
- , pretest_review_block
- , instructions_trial
- , instruction_block
- , training_trial
- , training_block
- , posttest_trial
- , posttest_block
- , generalization_trial
- , generalization_block
- , debriefing ] });
+jsPsych.init({ timeline: [ welcome_trial
+                         , pretest_block
+                         , pretest_review_block
+                         , instructions_trial
+                         , instruction_block
+                         , training_trial
+                         , training_block
+                         , posttest_trial
+                         , posttest_block
+                         , posttest_review_block
+                         , generalization_trial
+                         , generalization_block
+                         /*, debriefing*/ ]
+             , shared: { pretest_paths: pretest_paths
+                       , posttest_paths: posttest_paths } });
 
 
 </script>
